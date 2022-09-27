@@ -13,6 +13,7 @@
         'stock',
     ],
     'data': [
+        'views/menu.xml'
     ],
     'license': 'LGPL-3',
 }
