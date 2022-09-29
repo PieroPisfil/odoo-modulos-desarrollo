@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="view_datasheet_form" model="ir.ui.view">
+        <field name="name">Vista formulario de datasheet de fotocopiadoras</field>
+        <field name="model">datasheet</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+<!--                <center>
+                        <h1 style="color: red; background-color: blue">
+                            Título
+                        </h1>
+                    </center> --> 
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active','=',True)]}" />
+                    <field name="image_1920" widget="image" class="oe_avatar" 
+                           options="{'preview_image':'image_128', 'size':['',128]}" />
+                    
+                    <div class="oe_title">
+                        <div class="o_row">
+                            <field name="active" invisible="1" />  
+                            <h1 style="display: flex;">
+                                <field name="copy_brand" options="{'no_create':True, 'no_open':True}"
+                                    required="1" class="oe_inline" />
+                                <span class="fa fa-circle" 
+                                attrs="{'invisible': [('copy_brand','=',False), ('name','=',False)]}" 
+                                style="font-size: 8px; padding: 5px 5px;" />
+                                <field name="name" placeholder="Modelo de la fotocopiadora" 
+                                    required="1" default_focus="1" style="padding-left: 10px;" 
+                                    class="oe_inline"/>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <h2>
+                            <field name="tipo_funcion" class="oe_inline" required="1" />
+                            <br/>
+                            <field name="tipo_color" class="oe_inline" required="1" />
+                        </h2>    
+                    </div>
+
+
+                    <group string="Tamaños máximos de papel" style="margin-top: -5px;" >
+                        <group attrs="{'invisible': [('tipo_funcion','=','only-printer-laser')]}">
+                            <field name="paper_format_luna" />
+                            <field name="paper_format_adf" />
+                        </group>
+                        <group>
+                            <field name="paper_format_bandeja" />
+                            <field name="paper_format_bypass" />
+                        </group>
+                    </group>
+                    <group string="Datos Principales" style="margin-top: -5px;" >
+                        <group>
+                            <field name="copy_speed" />
+                        </group>
+                    </group>
+                    <group string="Datos Principales" style="margin-top: -10px;" >
+                        <group>
+                            <field name="printer_speed" />
+                        </group>
+                        <group>
+                            <field name="printer_max_resolution" />
+                        </group>
+                    </group>
+                    <group string="Datos Principales" style="margin-top: -10px;" >
+                        <group>
+                            <field name="scan_max_speed_byn" />   
+                            <field name="scan_max_speed_color" />  
+                        </group>
+                        <group> 
+                            <field name="scan_max_resolution" />   
+                            <field name="scan_duplex_scan" />                  
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="product_toner_compatible" />
+                    </group>
+
+                    <group string="Archivos">
+                        <field name="tiene_brochure" widget="boolean_toggle" />
+                        <field name="brochure_file" filename="brochure_filename" attrs="{'invisible': [('tiene_brochure','=',False)]}" />
+                        <field name="brochure_filename" invisible="1" />
+                        <field name="link_brochure" widget="url"/>
+                    </group>
+
+                </sheet>
+
+<!--            <script>
+                    console.log('hola');
+                </script> -->
+            </form>
+        </field>
+    </record>
+
+</odoo>

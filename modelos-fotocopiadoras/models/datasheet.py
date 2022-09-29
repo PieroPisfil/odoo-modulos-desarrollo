@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from email.policy import default
 from odoo import fields, models, api
+
+copier_formats = [('no_tiene', 'No tiene'),
+                  ('a4', 'Hasta A4'),
+                  ('letter', 'Hasta A4 - Letter(Carta)'),
+                  ('legal', 'Hasta A4 - Legal(Oficio)'),
+                  ('a3', 'Hasta A3'), ]
 
 
 class Datasheet(models.Model):
@@ -9,25 +14,28 @@ class Datasheet(models.Model):
     _inherit = ['image.mixin']
 
     name = fields.Char(string='Nombre de Modelo')
-    copy_brand = fields.Selection(selection=[
-        ('ricoh', 'Ricoh'),
-        ('minolta', 'Minolta'),
-        ('canon', 'Canon'),
-        ('lexamrk', 'Lexamrk'),
-        ('hp', 'HP'),
-        ('samsung', 'Samsung'),
-        ('sin-marca', 'Sin Marca'),
-    ], string='Marca')
+    copy_brand = fields.Many2one(
+        comodel_name='copier.brand',
+        string='Marca')
+    tipo_funcion = fields.Selection(selection=[
+        ('multifuncional-laser',
+         'Copiadora Multifuncional Laser (Impresora-Copiadora-Escaner-Fax)'),
+        ('only-printer-laser', 'Impresora Laser'),
+    ], string='Tipo', default='multifuncional-laser')
     tipo_color = fields.Selection(selection=[
         ('monocroma', 'Monócroma'),
         ('color', 'Color'),
     ], string='Tipo')
 
-    paper_format = fields.Selection([
-        ('a4', 'A4'),
-        ('letter', 'A4-Oficio'),
-        ('a3', 'A4-A3'),
-    ], string='Formato de Papel')
+    paper_format_luna = fields.Selection(
+        copier_formats, string='Formato Luna')
+    paper_format_bandeja = fields.Selection(
+        copier_formats, string='Formato Bandeja')
+    paper_format_bypass = fields.Selection(
+        copier_formats, string='Formato Bypass')
+    paper_format_adf = fields.Selection(
+        copier_formats, string='Formato ADF')
+
     copy_speed = fields.Integer(string='Velocidad de copiado')  # ppm
 
     printer_speed = fields.Integer(string='Velocidad de impresión')  # ppm
@@ -57,5 +65,6 @@ class Datasheet(models.Model):
     link_brochure = fields.Char(string='Link a Brochure')
     tiene_brochure = fields.Boolean(string='Tiene brochure')
     brochure_file = fields.Binary(string='Brochure')
+    brochure_filename = fields.Char()
 
     active = fields.Boolean(default=True)

@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
  <odoo>
  
-    <record id="aciton_open_datasheet" model="ir.actions.act_window">
+    <record id="action_open_datasheet" model="ir.actions.act_window">
         <field name="name">Hoja de datos</field>
         <field name="res_model">datasheet</field>
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="action_open_copier_brand" model="ir.actions.act_window">
+        <field name="name">Marcas de Copiadoras</field>
+        <field name="res_model">copier.brand</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="menu_principal" name="Fotocopiadoras" />
     <menuitem id="menu_horizontal" name ="Mis Modelos" parent="menu_principal" />
-    <menuitem id="menu_vertical_datasheet" name="Hojas de Datos" parent="menu_horizontal" action="aciton_open_datasheet" />
+    <menuitem id="menu_vertical_datasheet" name="Hojas de Datos" parent="menu_horizontal" action="action_open_datasheet" />
+
+    <menuitem id="menu_vertical_copier_brand" name="Marcas de Foto." parent="menu_horizontal" action="action_open_copier_brand" />
 
  </odoo>
