@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
+# libreria para los mensaje para consola
+import logging
+
 from odoo import fields, models, api
+# librería para mensajes
+from odoo.exceptions import UserError
+
+logger = logging.getLogger(__name__)
 
 copier_formats = [('no_tiene', 'No tiene'),
                   ('a4', 'Hasta A4'),
@@ -26,6 +33,7 @@ class Datasheet(models.Model):
         ('monocroma', 'Monócroma'),
         ('color', 'Color'),
     ], string='Tipo')
+    mns_tipo_color = fields.Char(string='Descripcion TIpo Color')
 
     paper_format_luna = fields.Selection(
         copier_formats, string='Formato Luna')
@@ -67,4 +75,63 @@ class Datasheet(models.Model):
     brochure_file = fields.Binary(string='Brochure')
     brochure_filename = fields.Char()
 
+    porcentaje = fields.Integer(
+        related="porcentaje_value", string='Porcentaje')
+    porcentaje_value = fields.Integer(string='Porcentaje valor')
+
+    state = fields.Selection(selection=[
+        ('borrador', 'Borrador'),
+        ('aprobado', 'Aprobado'),
+        ('cancelado', 'Cancelado'),
+    ], default='borrador', string='Estados', copy=False)
+    fch_aprobado = fields.Datetime(string='Fecha aprobado', copy=False)
+
     active = fields.Boolean(default=True)
+
+    def aprobar_datasheet(self):
+        logger.info('***************Entró a la función aprobar datasheet')
+        self.state = 'aprobado'
+        self.fch_aprobado = fields.Datetime.now()
+
+    def cancelar_datasheet(self):
+        self.state = 'cancelado'
+
+    # funcion para borrar registros :O
+    def unlink(self):
+        logger.info('***************Entró a la función unlink')
+        if self.state == 'aprobado':
+            raise UserError(
+                'No se puede eliminar el registro, debe estar en cancelado o borrador.')
+            # se hace un break y no se ejecuta lo siguiente
+        # Llamado a la funcion original de borrado
+        super(Datasheet, self).unlink()
+
+    @api.model
+    def create(self, variables):
+        logger.info('***************variables: {0}'.format(variables))
+        # Llamado a la funcion original de creación
+        return super(Datasheet, self).create(variables)
+
+    def write(self, variables):
+        logger.info('***************variables: {0}'.format(variables))
+        if 'tipo_funcion' in variables:
+            raise UserError('El tipo funcion no se puede cambiar')
+        # Llamado a la funcion original de editar registros
+        return super(Datasheet, self).write(variables)
+
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['name'] = self.name + '(Copia)'
+        default['porcentaje_value'] = 10
+        # Llamado a la funcion original de duplicar registros
+        return super(Datasheet, self).copy(default)
+
+    @api.onchange('tipo_color')
+    def _onchange_tipo_color(self):
+        if self.tipo_color:
+            if self.tipo_color == 'monocroma':
+                self.mns_tipo_color = 'La copiadora es monócroma'
+            if self.tipo_color == 'color':
+                self.mns_tipo_color = 'La copiadora es de color'
+        else:
+            self.mns_tipo_color = False

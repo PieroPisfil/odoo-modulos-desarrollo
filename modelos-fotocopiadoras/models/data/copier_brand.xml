@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="copier_brand_ricoh" model="copier.brand">
+        <field name="name">Ricoh</field>
+    </record>
+    <record id="copier_brand_lexmark" model="copier.brand">
+        <field name="name">Lexmark</field>
+    </record>
+    <record id="copier_brand_minolta" model="copier.brand">
+        <field name="name">Minolta</field>
+    </record>
+    <record id="copier_brand_canon" model="copier.brand">
+        <field name="name">Canon</field>
+    </record>
+</odoo>

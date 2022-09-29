@@ -6,6 +6,18 @@
         <field name="model">datasheet</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button string="Aprobar" type="object" name="aprobar_datasheet" class="oe_highlight"
+                            states="borrador"/>
+                    <button string="Cancelar" type="object" name="cancelar_datasheet" 
+                            states="borrador,aprobado"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrador,aprobado" />
+                </header>
+                <div class="alert alert-info" role="alert" style="margin-bottom: 0px" 
+                        attrs="{'invisible': [('mns_tipo_color','=',False)]}">
+                    <field name="mns_tipo_color" readonly="1" force_save="1"/>
+                </div>
+
                 <sheet>
 <!--                <center>
                         <h1 style="color: red; background-color: blue">
@@ -27,7 +39,7 @@
                                 style="font-size: 8px; padding: 5px 5px;" />
                                 <field name="name" placeholder="Modelo de la fotocopiadora" 
                                     required="1" default_focus="1" style="padding-left: 10px;" 
-                                    class="oe_inline"/>
+                                    class="oe_inline" attrs="{'readonly':[('state','=','aprobado')]}"/>
                             </h1>
                         </div>
                     </div>
@@ -38,7 +50,12 @@
                             <field name="tipo_color" class="oe_inline" required="1" />
                         </h2>    
                     </div>
-
+                    <div>
+                        <field name="porcentaje" widget="percentpie" string=" " 
+                            style="padding-left: 10px;" class="oe_inline"/>
+                        <field name="porcentaje_value" string=" " placeholder="Porcentaje"
+                                class="oe_edit_only oe_inline"/>
+                    </div>
 
                     <group string="Tamaños máximos de papel" style="margin-top: -5px;" >
                         <group attrs="{'invisible': [('tipo_funcion','=','only-printer-laser')]}">
@@ -74,15 +91,20 @@
                         </group>
                     </group>
 
-                    <group>
+                    <div>
+                        <group string="Toner Compatibles"></group>
                         <field name="product_toner_compatible" />
-                    </group>
+                    </div>
 
                     <group string="Archivos">
                         <field name="tiene_brochure" widget="boolean_toggle" />
                         <field name="brochure_file" filename="brochure_filename" attrs="{'invisible': [('tiene_brochure','=',False)]}" />
                         <field name="brochure_filename" invisible="1" />
                         <field name="link_brochure" widget="url"/>
+                    </group>
+
+                    <group>
+                        <field name="fch_aprobado" readonly="1" />
                     </group>
 
                 </sheet>
