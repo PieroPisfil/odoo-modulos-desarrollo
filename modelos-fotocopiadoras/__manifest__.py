@@ -13,6 +13,7 @@
         'stock',
     ],
     'data': [
+        'security/security.xml',
         'data/copier_brand.xml',
         'views/menu.xml',
         'views/datasheet_view.xml',

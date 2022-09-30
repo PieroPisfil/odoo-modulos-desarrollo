@@ -4,13 +4,13 @@
     <record id="action_open_datasheet" model="ir.actions.act_window">
         <field name="name">Hoja de datos</field>
         <field name="res_model">datasheet</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
     </record>
 
     <record id="action_open_copier_brand" model="ir.actions.act_window">
         <field name="name">Marcas de Copiadoras</field>
         <field name="res_model">copier.brand</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
     </record>
 
     <menuitem id="menu_principal" name="Fotocopiadoras" />
