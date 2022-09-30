@@ -18,7 +18,7 @@ copier_formats = [('no_tiene', 'No tiene'),
 
 class Datasheet(models.Model):
     _name = "datasheet"
-    _inherit = ['image.mixin']
+    _inherit = ['mail.thread','mail.activity.mixin','image.mixin']
 
     name = fields.Char(string='Nombre de Modelo')
     copy_brand = fields.Many2one(

@@ -9,8 +9,8 @@
     """,
     'author': "Piero Pisfil",
     'depends': [
-        'base',
         'stock',
+        'mail',
     ],
     'data': [
         'security/security.xml',
