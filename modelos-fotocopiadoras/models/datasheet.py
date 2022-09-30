@@ -18,7 +18,7 @@ copier_formats = [('no_tiene', 'No tiene'),
 
 class Datasheet(models.Model):
     _name = "datasheet"
-    _inherit = ['mail.thread','mail.activity.mixin','image.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'image.mixin']
 
     name = fields.Char(string='Nombre de Modelo')
     copy_brand = fields.Many2one(
@@ -33,7 +33,7 @@ class Datasheet(models.Model):
         ('monocroma', 'Monócroma'),
         ('color', 'Color'),
     ], string='Tipo')
-    mns_tipo_color = fields.Char(string='Descripcion TIpo Color')
+    mns_tipo_color = fields.Char(string='Descripcion Tipo Color')
 
     paper_format_luna = fields.Selection(
         copier_formats, string='Formato Luna')

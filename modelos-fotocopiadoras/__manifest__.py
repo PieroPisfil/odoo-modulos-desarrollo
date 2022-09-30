@@ -15,6 +15,7 @@
     'data': [
         'security/security.xml',
         'data/copier_brand.xml',
+        'report/reporte_datasheet.xml',
         'views/menu.xml',
         'views/datasheet_view.xml',
         'views/copier_brand_view.xml',
