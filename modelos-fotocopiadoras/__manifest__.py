@@ -14,6 +14,7 @@
     ],
     'data': [
         'security/security.xml',
+        'security/ir.model.access.csv',
         'data/copier_brand.xml',
         'report/reporte_datasheet.xml',
         'views/menu.xml',

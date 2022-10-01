@@ -2,6 +2,7 @@
 
 <odoo>
 
+    <!-- Permisos de seguridad -->
     <record id="module_category_datasheet_father" model="ir.module.category">
         <field name="name">Fotocopiadoras</field>
         <field name="sequence">1</field>
@@ -21,6 +22,21 @@
         <field name="name">Administrador</field>
         <field name="category_id" ref="module_category_datasheet_son"/>
         <field name="implied_ids" eval="[(4, ref('group_datasheet_usuario'))]"></field>
+    </record>
+
+    <!-- Reglas de seguridad -->
+    <record id="datasheet_propios_rule" model="ir.rule">
+        <field name="name">Ver solo Datasheet propios</field>
+        <field name="model_id" ref="model_datasheet"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_datasheet_usuario'))]"/>
+    </record>
+
+    <record id="datasheet_todos_rule" model="ir.rule">
+        <field name="name">Ver Datasheet todos</field>
+        <field name="model_id" ref="model_datasheet"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_datasheet_admin'))]"/>
     </record>
 
 </odoo>

@@ -8,7 +8,7 @@
             <form>
                 <header>
                     <button string="Aprobar" type="object" name="aprobar_datasheet" class="oe_highlight"
-                            states="borrador"/>
+                            states="borrador" groups="modelos-fotocopiadoras.group_datasheet_admin"/>
                     <button string="Cancelar" type="object" name="cancelar_datasheet" 
                             states="borrador,aprobado"/>
                     <field name="state" widget="statusbar" statusbar_visible="borrador,aprobado" />
