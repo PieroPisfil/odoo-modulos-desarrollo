@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from lxml import etree
 
 from odoo import fields, models, api
 
@@ -38,6 +39,16 @@ condition_sunat_v = [('HABIDO', 'HABIDO'),
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    # Modificamos para que aparezca Perú por defecto
+    country_id = fields.Many2one(
+        'res.country', string='Country', ondelete='restrict', default=lambda self: self.env.ref('base.pe'))
+    # Modificamos para que aparezca Lambayeque por defecto
+    state_id = fields.Many2one("res.country.state", string='State', ondelete='restrict',
+                               domain="[('country_id', '=?', country_id)]", default=lambda self: self.env.ref('base.state_pe_14'))
+
+    l10n_pe_district = fields.Many2one('l10n_pe.res.city.district', string='District', help='Districts are part of a province or city.',
+                                       default=lambda self: self.env.ref('l10n_pe.district_pe_140101'))
+    # Modificamos para que aparezca RUC por defecto
     l10n_latam_identification_type_id = fields.Many2one(
         'l10n_latam.identification.type', default=lambda self: self.env.ref('l10n_pe.it_RUC'))
     # doc_type = fields.Char(related = 'l10n_latam_identification_type_id.l10n_pe_vat_code', store = True)

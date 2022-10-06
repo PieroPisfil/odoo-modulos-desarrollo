@@ -41,6 +41,11 @@
 				<attribute name="invisible">1</attribute>
 			</xpath>  -->
 
+			<xpath expr="//field[@name='state_id']" position="attributes">
+				<attribute name="options">{'no_create': True, 'no_open: True'}</attribute>
+				<attribute name="can_create">false</attribute>
+			</xpath>
+
 			<xpath expr="//h1" position="after">
 				<div class="o_row">
 					<field name="l10n_latam_identification_type_id" placeholder="Tipo de documento" colspan="1" nolabel="1" style="font-size: 16px; width: 70%" attrs="{'invisible': [('parent_id', '!=', False)]}" />
