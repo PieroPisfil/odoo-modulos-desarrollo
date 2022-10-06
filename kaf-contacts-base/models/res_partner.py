@@ -61,3 +61,9 @@ class ResPartner(models.Model):
         condition_sunat_v, string='Condición', default='HABIDO')
     is_validate = fields.Boolean(string='Está validado')
     last_update = fields.Datetime(string='Última actualización')
+
+    vat = fields.Char(related='doc_number')
+    zip = fields.Char(related='l10n_pe_district.code', store=True)
+    # @api.onchange('doc_number')
+    # def _on_change_estado(self):
+    #    self.vat = self.doc_number
