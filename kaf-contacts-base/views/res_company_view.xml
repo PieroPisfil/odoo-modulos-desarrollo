@@ -11,8 +11,8 @@
             <group>
               <group>
                 <field name="busqueda_ruc"/>
-                <field name="token_apisperu" attrs="{'invisible': ['|', ('busqueda_ruc', '=', 'apiperu'), ('busqueda_ruc', '=', 'sinapi')]}"/>
-                <field name="token_apiperu" attrs="{'invisible': ['|', ('busqueda_ruc', '=', 'apisperu'), ('busqueda_ruc', '=', 'sinapi')]}"/>
+                <field name="token_apisperu" attrs="{'invisible': [('busqueda_ruc', '!=', 'apisperu')]}"/>
+                <field name="token_apiperu" attrs="{'invisible': [('busqueda_ruc', '!=', 'apiperu')]}"/>
               </group>
             </group>
           </page>
