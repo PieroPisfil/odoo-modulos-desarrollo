@@ -49,7 +49,7 @@
 			<xpath expr="//h1" position="after">
 				<div class="o_row">
 					<field name="l10n_latam_identification_type_id" placeholder="Tipo de documento" colspan="1" nolabel="1" style="font-size: 16px; width: 70%" attrs="{'invisible': [('parent_id', '!=', False)]}" />
-					<field name="doc_number" placeholder="Nro Documento" colspan="3" nolabel="1" style="font-size: 16px; width: 29%" attrs="{'invisible': [('parent_id', '!=', False)]}" />
+					<field name="vat" placeholder="Nro Documento" colspan="3" nolabel="1" style="font-size: 16px; width: 29%" attrs="{'invisible': [('parent_id', '!=', False)]}" />
 				</div>
 			</xpath> 
 			<xpath expr="//field[@name='category_id']" position="after">

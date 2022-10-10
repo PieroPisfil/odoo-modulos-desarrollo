@@ -63,23 +63,24 @@ class ResPartner(models.Model):
     # Modificamos para que aparezca RUC por defecto
     l10n_latam_identification_type_id = fields.Many2one(
         'l10n_latam.identification.type', default=lambda self: self.env.ref('l10n_pe.it_RUC'))
-    doc_number = fields.Char(string='Numero de documento')
-    commercial_name = fields.Char(string='Nombre comercial', default='-')
-    legal_name = fields.Char(string='Nombre legal', default='-')
+    #doc_number = fields.Char(string='Numero de documento')
+    commercial_name = fields.Char(
+        string='Nombre comercial', default='-', copy=False)
+    legal_name = fields.Char(string='Nombre legal', default='-', copy=False)
     state_sunat = fields.Selection(
-        state_sunat_v, string='Estado', default='ACTIVO')
+        state_sunat_v, string='Estado', default='ACTIVO', copy=False)
     condition_sunat = fields.Selection(
-        condition_sunat_v, string='Condición', default='HABIDO')
-    is_validate = fields.Boolean(string='Está validado')
+        condition_sunat_v, string='Condición', default='HABIDO', copy=False)
+    is_validate = fields.Boolean(string='Está validado', copy=False)
 
-    last_update = fields.Datetime(string='Última actualización')
+    last_update = fields.Datetime(string='Última actualización', copy=False)
 
-    vat = fields.Char(related='doc_number')
+    #vat = fields.Char(related='doc_number', store=True)
     zip = fields.Char(related='l10n_pe_district.code', store=True)
 
     @api.onchange('company_type')
     def _on_change_estado(self):
-        if self.company_type == 'person':
+        if self.company_type == 'person' and not self.vat:
             self.l10n_latam_identification_type_id = self.env.ref(
                 'l10n_pe.it_DNI')
         if self.company_type == 'company':
@@ -111,7 +112,7 @@ class ResPartner(models.Model):
                     if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
                         self.verify_dni_apisperu(token)
                     elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-                        #if len(self.vat) != 11:
+                        # if len(self.vat) != 11:
                         #    return {'error': True, 'message': 'Error, debe tener 11 digitos'}
                         self.verify_ruc_apisperu(token)
                 elif tipo_busqueda == 'apiperu':
@@ -134,6 +135,7 @@ class ResPartner(models.Model):
                 'name': result_json['apellidoPaterno'].strip().upper() + ' ' + result_json['apellidoMaterno'].strip().upper() + ' ' + result_json['nombres'].strip().upper(),
                 'company_type': 'person'
             })
+            self.last_update = fields.Datetime.now()
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -144,26 +146,103 @@ class ResPartner(models.Model):
         result = requests.get(url)
         if result.status_code == 200:
             result_json = result.json()
+            ruc = result_json['ruc']
+            if ruc[0:2] == '20':
+                district = district_obj.search([('name', '=ilike', result_json['distrito']),
+                                                ('city_id.name', '=ilike', result_json['provincia'])], limit=1)
+                if not district.exists():
+                    district = district_obj.search(
+                        [('code', '=', result_json['ubigeo'])])
 
-            district = district_obj.search([('name', '=ilike', result_json['distrito']),
-                                            ('city_id.name', '=ilike', result_json['provincia'])], limit=1)
-            if not district.exists():
-                district = district_obj.search(
-                    [('code', '=', result_json['ubigeo'])])
+                self.update({
+                    'name': result_json['razonSocial'],
+                    'legal_name': result_json['razonSocial'],
+                    'commercial_name': result_json['razonSocial'],
+                    'street': result_json['direccion'].rsplit(' ', 3)[0],
+                    'zip': result_json['ubigeo'],
+                    'state_id': district.city_id.state_id.id,
+                    'city_id': district.city_id.id,
+                    'l10n_pe_district': district.id,
+                    'state_sunat': result_json['estado'],
+                    'condition_sunat': result_json['condicion'],
+                    'company_type': 'company'
+                })
+                self.last_update = fields.Datetime.now()
+            elif ruc[0:2] == '10':
+                self.update({
+                    'name': result_json['razonSocial'],
+                    'legal_name': result_json['razonSocial'],
+                    'commercial_name': result_json['razonSocial'],
+                    'state_sunat': result_json['estado'],
+                    'condition_sunat': result_json['condicion'],
+                    'company_type': 'person'
+                })
+                self.last_update = fields.Datetime.now()
 
+        else:
+            return {'error': True, 'message': 'Error al intentar obtener datos'}
+
+    def verify_dni_apiperu(self, token):
+        if not self.vat:
+            raise UserError("Debe seleccionar un DNI")
+        endpoint = "https://apiperu.dev/api/dni/%s" % self.vat
+        headers = {
+            "Authorization": "Bearer %s" % token,
+            "Content-Type": "application/json",
+        }
+        result = requests.get(endpoint, data={}, headers=headers)
+        if result.status_code == 200:
+            result_json = result.json()
             self.update({
-                'name': result_json['razonSocial'],
-                'legal_name': result_json['razonSocial'],
-                'commercial_name': result_json['razonSocial'],
-                'street': result_json['direccion'].rsplit(' ', 3)[0],
-                'zip': result_json['ubigeo'],
-                'state_id': district.city_id.state_id.id,
-                'city_id': district.city_id.id,
-                'l10n_pe_district': district.id,
-                'state_sunat': result_json['estado'],
-                'condition_sunat': result_json['condicion'],
-                'company_type': 'company'
+                'name': result_json['data']['nombre_completo'].strip(",").upper(),
+                'company_type': 'person'
             })
+            self.last_update = fields.Datetime.now()
+        else:
+            return {'error': True, 'message': 'Error al intentar obtener datos'}
+
+    def verify_ruc_apiperu(self, token):
+        district_obj = self.env['l10n_pe.res.city.district']
+        endpoint = "https://apiperu.dev/api/ruc/%s" % self.vat
+        headers = {
+            "Authorization": "Bearer %s" % token,
+            "Content-Type": "application/json",
+        }
+        result = requests.get(endpoint, data={}, headers=headers)
+        if result.status_code == 200:
+            result_json = result.json()
+            ruc = result_json['data']['ruc']
+            if ruc[0:2] == '20':
+                district = district_obj.search([('name', '=ilike', result_json['data']['distrito']),
+                                                ('city_id.name', '=ilike', result_json['data']['provincia'])], limit=1)
+                if not district.exists():
+                    district = district_obj.search(
+                        [('code', '=', result_json['data']['ubigeo'][2])])
+
+                self.update({
+                    'name': result_json['data']['nombre_o_razon_social'],
+                    'legal_name': result_json['data']['nombre_o_razon_social'],
+                    'commercial_name': result_json['data']['nombre_o_razon_social'],
+                    'street': result_json['data']['direccion'],
+                    'zip': result_json['data']['ubigeo'][2],
+                    'state_id': district.city_id.state_id.id,
+                    'city_id': district.city_id.id,
+                    'l10n_pe_district': district.id,
+                    'state_sunat': result_json['data']['estado'],
+                    'condition_sunat': result_json['data']['condicion'],
+                    'company_type': 'company'
+                })
+                self.last_update = fields.Datetime.now()
+            elif ruc[0:2] == '10':
+                self.update({
+                    'name': result_json['data']['nombre_o_razon_social'],
+                    'legal_name': result_json['data']['nombre_o_razon_social'],
+                    'commercial_name': result_json['data']['nombre_o_razon_social'],
+                    'state_sunat': result_json['data']['estado'],
+                    'condition_sunat': result_json['data']['condicion'],
+                    'company_type': 'person'
+                })
+                self.last_update = fields.Datetime.now()
 
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
