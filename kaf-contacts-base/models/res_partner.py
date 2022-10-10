@@ -77,6 +77,11 @@ class ResPartner(models.Model):
 
     #vat = fields.Char(related='doc_number', store=True)
     zip = fields.Char(related='l10n_pe_district.code', store=True)
+    # Verificamos que no haya doscontactos con el mismo dni, ruc o pasaporte
+    _sql_constraints = [
+        ('unique_vat', 'unique(vat, active)',
+         'Error: El usuario ya está registrado')
+    ]
 
     @api.onchange('company_type')
     def _on_change_estado(self):
@@ -110,15 +115,21 @@ class ResPartner(models.Model):
             try:
                 if tipo_busqueda == 'apisperu':
                     if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+                        if len(self.vat) != 8:
+                            return
                         self.verify_dni_apisperu(token)
                     elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-                        # if len(self.vat) != 11:
-                        #    return {'error': True, 'message': 'Error, debe tener 11 digitos'}
+                        if len(self.vat) != 11:
+                            return
                         self.verify_ruc_apisperu(token)
                 elif tipo_busqueda == 'apiperu':
                     if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+                        if len(self.vat) != 8:
+                            return
                         self.verify_dni_apiperu(token)
                     elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
+                        if len(self.vat) != 11:
+                            return
                         self.verify_ruc_apiperu(token)
             except Exception as ex:
                 _logger.error('Ha ocurrido un error {}'.format(ex))
@@ -246,3 +257,16 @@ class ResPartner(models.Model):
 
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
+
+    @api.constrains('vat')
+    def _check_dni(self):
+        if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+            try:
+                int(self.vat)
+                if len(self.vat) != 8:
+                    msg2 = 'Error: DNI debe tener 8 digitos'
+                    raise ValidationError(msg2)
+                return
+            except (TypeError, ValueError):
+                msg = 'Error: DNI debe ser solo números'
+                raise ValidationError(msg)
