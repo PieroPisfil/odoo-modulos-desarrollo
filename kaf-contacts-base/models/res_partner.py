@@ -82,7 +82,7 @@ class ResPartner(models.Model):
     # Verificamos que no haya doscontactos con el mismo dni, ruc o pasaporte
     _sql_constraints = [
         ('unique_vat', 'unique(vat, active)',
-         'Error: El usuario ya está registrado')
+         'Error: El usuario ya está registrado, (tal vez en otra compañía, verificarlo y hacerlo multicompañía)')
     ]
 
     @api.onchange('company_type')
