@@ -55,15 +55,14 @@ class ResPartner(models.Model):
     country_id = fields.Many2one(
         'res.country', string='Country', ondelete='restrict', default=lambda self: self.env.ref('base.pe'))
     # Modificamos para que aparezca Lambayeque por defecto
-    state_id = fields.Many2one("res.country.state", string='State', ondelete='restrict',
-                               domain="[('country_id', '=?', country_id)]", default=lambda self: self.env.ref('base.state_pe_14'))
+    # state_id = fields.Many2one("res.country.state", string='State', ondelete='restrict',
+    #                           domain="[('country_id', '=?', country_id)]", default=lambda self: self.env.ref('base.state_pe_14'))
 
     l10n_pe_district = fields.Many2one('l10n_pe.res.city.district', string='District', help='Districts are part of a province or city.',
-                                       default=lambda self: self.env.ref('l10n_pe.district_pe_140101'))
+                                       default=lambda self: self._search_district())
     # Modificamos para que aparezca RUC por defecto
     l10n_latam_identification_type_id = fields.Many2one(
         'l10n_latam.identification.type', default=lambda self: self.env.ref('l10n_pe.it_RUC'))
-    #doc_number = fields.Char(string='Numero de documento')
     commercial_name = fields.Char(
         string='Nombre comercial', default='-', copy=False)
     legal_name = fields.Char(string='Nombre legal', default='-', copy=False)
@@ -75,7 +74,6 @@ class ResPartner(models.Model):
 
     last_update = fields.Datetime(string='Última actualización', copy=False)
 
-    #vat = fields.Char(related='doc_number', store=True)
     zip = fields.Char(related='l10n_pe_district.code', store=True)
     # Verificamos que no haya doscontactos con el mismo dni, ruc o pasaporte
     _sql_constraints = [
@@ -142,11 +140,12 @@ class ResPartner(models.Model):
         result = requests.get(url, verify=False)
         if result.status_code == 200:
             result_json = result.json()
-            self.update({
-                'name': result_json['apellidoPaterno'].strip().upper() + ' ' + result_json['apellidoMaterno'].strip().upper() + ' ' + result_json['nombres'].strip().upper(),
-                'company_type': 'person'
-            })
-            self.last_update = fields.Datetime.now()
+            if result_json['dni']:
+                self.update({
+                    'name': result_json['apellidoPaterno'].strip().upper() + ' ' + result_json['apellidoMaterno'].strip().upper() + ' ' + result_json['nombres'].strip().upper(),
+                    'company_type': 'person'
+                })
+                self.last_update = fields.Datetime.now()
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -157,39 +156,39 @@ class ResPartner(models.Model):
         result = requests.get(url)
         if result.status_code == 200:
             result_json = result.json()
-            ruc = result_json['ruc']
-            if ruc[0:2] == '20':
-                district = district_obj.search([('name', '=ilike', result_json['distrito']),
-                                                ('city_id.name', '=ilike', result_json['provincia'])], limit=1)
-                if not district.exists():
-                    district = district_obj.search(
-                        [('code', '=', result_json['ubigeo'])])
+            if result_json['ruc']:
+                ruc = result_json['ruc']
+                if ruc[0:2] == '20':
+                    district = district_obj.search([('name', '=ilike', result_json['distrito']),
+                                                    ('city_id.name', '=ilike', result_json['provincia'])], limit=1)
+                    if not district.exists():
+                        district = district_obj.search(
+                            [('code', '=', result_json['ubigeo'])])
 
-                self.update({
-                    'name': result_json['razonSocial'],
-                    'legal_name': result_json['razonSocial'],
-                    'commercial_name': result_json['razonSocial'],
-                    'street': result_json['direccion'].rsplit(' ', 3)[0],
-                    'zip': result_json['ubigeo'],
-                    'state_id': district.city_id.state_id.id,
-                    'city_id': district.city_id.id,
-                    'l10n_pe_district': district.id,
-                    'state_sunat': result_json['estado'],
-                    'condition_sunat': result_json['condicion'],
-                    'company_type': 'company'
-                })
-                self.last_update = fields.Datetime.now()
-            elif ruc[0:2] == '10':
-                self.update({
-                    'name': result_json['razonSocial'],
-                    'legal_name': result_json['razonSocial'],
-                    'commercial_name': result_json['razonSocial'],
-                    'state_sunat': result_json['estado'],
-                    'condition_sunat': result_json['condicion'],
-                    'company_type': 'person'
-                })
-                self.last_update = fields.Datetime.now()
-
+                    self.update({
+                        'name': result_json['razonSocial'],
+                        'legal_name': result_json['razonSocial'],
+                        'commercial_name': result_json['razonSocial'],
+                        'street': result_json['direccion'].rsplit(' ', 3)[0],
+                        'zip': result_json['ubigeo'],
+                        'state_id': district.city_id.state_id.id,
+                        'city_id': district.city_id.id,
+                        'l10n_pe_district': district.id,
+                        'state_sunat': result_json['estado'],
+                        'condition_sunat': result_json['condicion'],
+                        'company_type': 'company'
+                    })
+                    self.last_update = fields.Datetime.now()
+                elif ruc[0:2] == '10':
+                    self.update({
+                        'name': result_json['razonSocial'],
+                        'legal_name': result_json['razonSocial'],
+                        'commercial_name': result_json['razonSocial'],
+                        'state_sunat': result_json['estado'],
+                        'condition_sunat': result_json['condicion'],
+                        'company_type': 'person'
+                    })
+                    self.last_update = fields.Datetime.now()
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -204,11 +203,12 @@ class ResPartner(models.Model):
         result = requests.get(endpoint, data={}, headers=headers)
         if result.status_code == 200:
             result_json = result.json()
-            self.update({
-                'name': result_json['data']['nombre_completo'].strip(",").upper(),
-                'company_type': 'person'
-            })
-            self.last_update = fields.Datetime.now()
+            if result_json['success'] == True:
+                self.update({
+                    'name': result_json['data']['nombre_completo'].strip(",").upper(),
+                    'company_type': 'person'
+                })
+                self.last_update = fields.Datetime.now()
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -222,38 +222,39 @@ class ResPartner(models.Model):
         result = requests.get(endpoint, data={}, headers=headers)
         if result.status_code == 200:
             result_json = result.json()
-            ruc = result_json['data']['ruc']
-            if ruc[0:2] == '20':
-                district = district_obj.search([('name', '=ilike', result_json['data']['distrito']),
-                                                ('city_id.name', '=ilike', result_json['data']['provincia'])], limit=1)
-                if not district.exists():
-                    district = district_obj.search(
-                        [('code', '=', result_json['data']['ubigeo'][2])])
+            if result_json['success'] == True:
+                ruc = result_json['data']['ruc']
+                if ruc[0:2] == '20':
+                    district = district_obj.search([('name', '=ilike', result_json['data']['distrito']),
+                                                    ('city_id.name', '=ilike', result_json['data']['provincia'])], limit=1)
+                    if not district.exists():
+                        district = district_obj.search(
+                            [('code', '=', result_json['data']['ubigeo'][2])])
 
-                self.update({
-                    'name': result_json['data']['nombre_o_razon_social'],
-                    'legal_name': result_json['data']['nombre_o_razon_social'],
-                    'commercial_name': result_json['data']['nombre_o_razon_social'],
-                    'street': result_json['data']['direccion'],
-                    'zip': result_json['data']['ubigeo'][2],
-                    'state_id': district.city_id.state_id.id,
-                    'city_id': district.city_id.id,
-                    'l10n_pe_district': district.id,
-                    'state_sunat': result_json['data']['estado'],
-                    'condition_sunat': result_json['data']['condicion'],
-                    'company_type': 'company'
-                })
-                self.last_update = fields.Datetime.now()
-            elif ruc[0:2] == '10':
-                self.update({
-                    'name': result_json['data']['nombre_o_razon_social'],
-                    'legal_name': result_json['data']['nombre_o_razon_social'],
-                    'commercial_name': result_json['data']['nombre_o_razon_social'],
-                    'state_sunat': result_json['data']['estado'],
-                    'condition_sunat': result_json['data']['condicion'],
-                    'company_type': 'person'
-                })
-                self.last_update = fields.Datetime.now()
+                    self.update({
+                        'name': result_json['data']['nombre_o_razon_social'],
+                        'legal_name': result_json['data']['nombre_o_razon_social'],
+                        'commercial_name': result_json['data']['nombre_o_razon_social'],
+                        'street': result_json['data']['direccion'].split(',')[0],
+                        'zip': result_json['data']['ubigeo'][2],
+                        'state_id': district.city_id.state_id.id,
+                        'city_id': district.city_id.id,
+                        'l10n_pe_district': district.id,
+                        'state_sunat': result_json['data']['estado'],
+                        'condition_sunat': result_json['data']['condicion'],
+                        'company_type': 'company'
+                    })
+                    self.last_update = fields.Datetime.now()
+                elif ruc[0:2] == '10':
+                    self.update({
+                        'name': result_json['data']['nombre_o_razon_social'],
+                        'legal_name': result_json['data']['nombre_o_razon_social'],
+                        'commercial_name': result_json['data']['nombre_o_razon_social'],
+                        'state_sunat': result_json['data']['estado'],
+                        'condition_sunat': result_json['data']['condicion'],
+                        'company_type': 'person'
+                    })
+                    self.last_update = fields.Datetime.now()
 
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
@@ -270,3 +271,29 @@ class ResPartner(models.Model):
             except (TypeError, ValueError):
                 msg = 'Error: DNI debe ser solo números'
                 raise ValidationError(msg)
+
+    # Buscamos la ubicacion de la compañia en la que nos encontramos
+    # y la ponemos por defecto al guardar un contacto
+    def _search_district(self):
+        if self.env.context.get('company_id'):
+            company = self.env['res.company'].browse(
+                self.env.context['company_id'])
+        else:
+            company = self.env.company
+        return company.partner_id.l10n_pe_district.id
+
+    def _search_provincia(self):
+        if self.env.context.get('company_id'):
+            company = self.env['res.company'].browse(
+                self.env.context['company_id'])
+        else:
+            company = self.env.company
+        return company.partner_id.city_id.id
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for variables in vals_list:
+            if not variables.get('l10n_pe_district'):
+                variables['l10n_pe_district'] = self._search_district()
+                variables['city_id'] = self._search_provincia()
+        return super(ResPartner, self).create(vals_list)
