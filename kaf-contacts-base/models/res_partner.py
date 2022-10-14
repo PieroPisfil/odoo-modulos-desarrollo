@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from email.policy import default
 from odoo import fields, models, api
 from odoo.exceptions import UserError, ValidationError
 import requests
@@ -73,6 +74,9 @@ class ResPartner(models.Model):
     is_validate = fields.Boolean(string='Está validado', copy=False)
 
     last_update = fields.Datetime(string='Última actualización', copy=False)
+
+    company_id = fields.Many2one(
+        'res.company', default=lambda self: self._search_company())
 
     zip = fields.Char(related='l10n_pe_district.code', store=True)
     # Verificamos que no haya doscontactos con el mismo dni, ruc o pasaporte
@@ -289,6 +293,14 @@ class ResPartner(models.Model):
         else:
             company = self.env.company
         return company.partner_id.city_id.id
+
+    def _search_company(self):
+        if self.env.context.get('company_id'):
+            company = self.env['res.company'].browse(
+                self.env.context['company_id'])
+        else:
+            company = self.env.company
+        return company.id
 
     @api.model_create_multi
     def create(self, vals_list):
