@@ -81,7 +81,7 @@ class ResPartner(models.Model):
     zip = fields.Char(related='l10n_pe_district.code', store=True)
     # Verificamos que no haya doscontactos con el mismo dni, ruc o pasaporte
     _sql_constraints = [
-        ('unique_vat', 'unique(vat, active)',
+        ('unique_vat', 'unique(vat, active, name, street)',
          'Error: El usuario ya está registrado, (tal vez en otra compañía, verificarlo y hacerlo multicompañía)')
     ]
 
