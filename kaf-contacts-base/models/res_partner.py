@@ -4,6 +4,7 @@ from email.policy import default
 from odoo import fields, models, api
 from odoo.exceptions import UserError, ValidationError
 import requests
+from collections import defaultdict
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -55,6 +56,7 @@ class ResPartner(models.Model):
     # Modificamos para que aparezca Perú por defecto
     country_id = fields.Many2one(
         'res.country', string='Country', ondelete='restrict', default=lambda self: self.env.ref('base.pe'))
+    # country_codigo = fields.Char(related='country_id.code', store=True)
     # Modificamos para que aparezca Lambayeque por defecto
     # state_id = fields.Many2one("res.country.state", string='State', ondelete='restrict',
     #                           domain="[('country_id', '=?', country_id)]", default=lambda self: self.env.ref('base.state_pe_14'))
@@ -93,6 +95,23 @@ class ResPartner(models.Model):
         if self.company_type == 'company':
             self.l10n_latam_identification_type_id = self.env.ref(
                 'l10n_pe.it_RUC')
+
+    @api.onchange('country_id')
+    def _on_change_country_id(self):
+        if self.country_id and self.country_id.code != 'PE':
+            self.l10n_pe_district = None
+            self.city = None
+            self.city_id = None
+            
+    @api.model
+    def consulta_datos(self, tipo_documento, nro_documento, format='json'):
+        res = {'error': True, 'message': None, 'data': {}}
+        # Si el nro. de doc. ya existe
+        res_partner = self.search([('vat', '=', nro_documento)]).exists()
+        if res_partner:
+            res['message'] = 'Nro. doc. ya existe'
+            return res
+        token = ''
 
     @api.onchange('vat', 'l10n_latam_identification_type_id')
     def _onchange_identification(self):
@@ -305,7 +324,8 @@ class ResPartner(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for variables in vals_list:
-            if not variables.get('l10n_pe_district'):
+            company = self.env.company
+            if not variables.get('l10n_pe_district') and not variables.get('city_id') and variables.get('state_id') == company.partner_id.state_id.id:
                 variables['l10n_pe_district'] = self._search_district()
                 variables['city_id'] = self._search_provincia()
         return super(ResPartner, self).create(vals_list)

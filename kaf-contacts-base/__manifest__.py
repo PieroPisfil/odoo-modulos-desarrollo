@@ -19,6 +19,7 @@
         'views/res_partner_view.xml',
         'views/res_company_view.xml',
         'views/pos_config_image_view.xml',
+        'data/res_country_data.xml',
     ],
     'assets': {
         'point_of_sale.assets': [

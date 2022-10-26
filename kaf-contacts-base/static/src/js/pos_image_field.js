@@ -7,11 +7,11 @@ odoo.define("kaf-contacts-base.pos_image_field", function (require) {
             get imageUrl() {
                 if (this.env.pos){
                     if (this.env.pos.config){
-                            if (this.env.pos.config.image != false){
-                                return `/web/image?model=pos.config&field=image&id=${this.env.pos.config_id}&unique=1`;
-                            }else{
-                                return false
-                            }
+                        if (this.env.pos.config.image != false){
+                            return `/web/image?model=pos.config&field=image&id=${this.env.pos.config_id}&unique=1`;
+                        }else{
+                            return false
+                        }
                     }
                 }
             }

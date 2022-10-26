@@ -6,7 +6,7 @@ var OrderSuper = models.Order;
 var _posModelSuper = models.PosModel.prototype;
 
 models.load_fields("res.company", ["street_name"]);
-models.load_fields("res.partner", ["l10n_latam_identification_type_id","city_id","l10n_pe_district"]);
+models.load_fields("res.partner", ["l10n_latam_identification_type_id","city_id","l10n_pe_district","state_sunat","condition_sunat"]);
 
 models.Order = models.Order.extend({
     initialize: function (attributes, options) {
@@ -36,7 +36,7 @@ models.load_models([{
 
 models.load_models([{
     model: 'res.city',
-    fields: ["name"],
+    fields: ["name","state_id"],
     loaded: function(self, cities_id){
         self.cities_id = cities_id;
     },
@@ -44,7 +44,7 @@ models.load_models([{
 
 models.load_models([{
     model: 'l10n_pe.res.city.district',
-    fields: ["name"],
+    fields: ["name","city_id"],
     loaded: function(self, districts){
         self.districts = districts;
     },
