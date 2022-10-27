@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from email.policy import default
 from odoo import fields, models, api
 from odoo.exceptions import UserError, ValidationError
 import requests
-from collections import defaultdict
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -48,8 +46,6 @@ QUERY_DOCUMENT_APISPERU = {
         'ruc': 'https://dniruc.apisperu.com/api/v1/ruc/{vat}?token={token}'
     }
 }
-
-
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
@@ -107,14 +103,10 @@ class ResPartner(models.Model):
     def consulta_datos(self, tipo_documento, nro_documento, format='json'):
         res = {'error': True, 'message': None, 'data': {}}
         # Si el nro. de doc. ya existe
-        res_partner = self.search([('vat', '=', nro_documento)]).exists()
-        if res_partner:
-            res['message'] = 'Nro. doc. ya existe'
-            return res
-        token = ''
-
-    @api.onchange('vat', 'l10n_latam_identification_type_id')
-    def _onchange_identification(self):
+        # res_partner = self.search([('vat', '=', nro_documento)]).exists()
+        # if res_partner:
+        #    res['message'] = 'Nro. doc. ya existe'
+        #    return res
         token = ''
         if self.company_id:
             tipo_busqueda = self.company_id.busqueda_ruc
@@ -132,50 +124,109 @@ class ResPartner(models.Model):
                 token = self.env.company.token_apisperu
             elif tipo_busqueda == 'apiperu':
                 token = self.env.company.token_apiperu
-        if self.l10n_latam_identification_type_id and self.vat:
-            try:
-                if tipo_busqueda == 'apisperu':
-                    if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
-                        if len(self.vat) != 8:
-                            return
-                        self.verify_dni_apisperu(token)
-                    elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-                        if len(self.vat) != 11:
-                            return
-                        self.verify_ruc_apisperu(token)
-                elif tipo_busqueda == 'apiperu':
-                    if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
-                        if len(self.vat) != 8:
-                            return
-                        self.verify_dni_apiperu(token)
-                    elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-                        if len(self.vat) != 11:
-                            return
-                        self.verify_ruc_apiperu(token)
-            except Exception as ex:
-                _logger.error('Ha ocurrido un error {}'.format(ex))
+        try:
+            if tipo_documento and nro_documento:
+                try:
+                    if tipo_busqueda == 'apisperu':
+                        if tipo_documento  == 'dni':
+                            if len(nro_documento) != 8:
+                                return
+                            return self.verify_dni_apisperu(token, nro_documento)
+                        elif tipo_documento  == 'ruc':
+                            if len(nro_documento) != 11:
+                                return
+                            return self.verify_ruc_apisperu(token, nro_documento)
+                    elif tipo_busqueda == 'apiperu':
+                        if tipo_documento  == 'dni':
+                            if len(nro_documento) != 8:
+                                return
+                            return self.verify_dni_apiperu(token, nro_documento)
+                        elif tipo_documento  == 'ruc':
+                            if len(nro_documento) != 11:
+                                return
+                            return self.verify_ruc_apiperu(token, nro_documento)
+                except Exception as ex:
+                    _logger.error('Ha ocurrido un error {}'.format(ex))
+        except Exception as e:
+            res['message'] = 'Error en la conexion: '+str(self.company_id)
+            return res
+        return res
 
-    def verify_dni_apisperu(self, token):
-        if not self.vat:
+    @api.onchange('vat', 'l10n_latam_identification_type_id')
+    def _onchange_identification(self):
+        if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+            tipo_documento = 'dni'
+            print(self.l10n_latam_identification_type_id.name)
+        elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
+            tipo_documento = 'ruc'
+            print(self.l10n_latam_identification_type_id.name)
+        self.consulta_datos(tipo_documento, self.vat, format='json')
+        # token = ''
+        # nro_documento = self.vat
+        # if self.company_id:
+        #     tipo_busqueda = self.company_id.busqueda_ruc
+        #     if tipo_busqueda == 'sinapi':
+        #         return
+        #     elif tipo_busqueda == 'apisperu':
+        #         token = self.company_id.token_apisperu
+        #     elif tipo_busqueda == 'apiperu':
+        #         token = self.company_id.token_apiperu
+        # else:
+        #     tipo_busqueda = self.env.company.busqueda_ruc
+        #     if tipo_busqueda == 'sinapi':
+        #         return
+        #     elif tipo_busqueda == 'apisperu':
+        #         token = self.env.company.token_apisperu
+        #     elif tipo_busqueda == 'apiperu':
+        #         token = self.env.company.token_apiperu
+        # if self.l10n_latam_identification_type_id and self.vat:
+        #     try:
+        #         if tipo_busqueda == 'apisperu':
+        #             if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+        #                 if len(self.vat) != 8:
+        #                     return
+        #                 self.verify_dni_apisperu(token, nro_documento)
+        #             elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
+        #                 if len(self.vat) != 11:
+        #                     return
+        #                 self.verify_ruc_apisperu(token, nro_documento)
+        #         elif tipo_busqueda == 'apiperu':
+        #             if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
+        #                 if len(self.vat) != 8:
+        #                     return
+        #                 self.verify_dni_apiperu(token, nro_documento)
+        #             elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
+        #                 if len(self.vat) != 11:
+        #                     return
+        #                 self.verify_ruc_apiperu(token, nro_documento)
+        #     except Exception as ex:
+        #         _logger.error('Ha ocurrido un error {}'.format(ex))
+        
+
+    def verify_dni_apisperu(self, token, nro_documento):
+        if not nro_documento:
             raise UserError("Debe seleccionar un DNI")
         url = QUERY_DOCUMENT_APISPERU['urls']['dni'].format(
-            vat=self.vat, token=token)
+            vat=nro_documento, token=token)
         result = requests.get(url, verify=False)
         if result.status_code == 200:
             result_json = result.json()
             if result_json['dni']:
-                self.update({
+                busqueda = {
                     'name': result_json['apellidoPaterno'].strip().upper() + ' ' + result_json['apellidoMaterno'].strip().upper() + ' ' + result_json['nombres'].strip().upper(),
                     'company_type': 'person'
-                })
+                }
+                self.update(busqueda)
                 self.last_update = fields.Datetime.now()
+                res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                return res
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
-    def verify_ruc_apisperu(self, token):
+    def verify_ruc_apisperu(self, token, nro_documento):
         district_obj = self.env['l10n_pe.res.city.district']
         url = QUERY_DOCUMENT_APISPERU['urls']['ruc'].format(
-            vat=self.vat, token=token)
+            vat=nro_documento, token=token)
         result = requests.get(url)
         if result.status_code == 200:
             result_json = result.json()
@@ -188,7 +239,7 @@ class ResPartner(models.Model):
                         district = district_obj.search(
                             [('code', '=', result_json['ubigeo'])])
 
-                    self.update({
+                    busqueda = {
                         'name': result_json['razonSocial'],
                         'legal_name': result_json['razonSocial'],
                         'commercial_name': result_json['razonSocial'],
@@ -200,25 +251,31 @@ class ResPartner(models.Model):
                         'state_sunat': result_json['estado'],
                         'condition_sunat': result_json['condicion'],
                         'company_type': 'company'
-                    })
+                    }
+                    self.update(busqueda)
                     self.last_update = fields.Datetime.now()
+                    res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                    return res
                 elif ruc[0:2] == '10':
-                    self.update({
+                    busqueda = {
                         'name': result_json['razonSocial'],
                         'legal_name': result_json['razonSocial'],
                         'commercial_name': result_json['razonSocial'],
                         'state_sunat': result_json['estado'],
                         'condition_sunat': result_json['condicion'],
                         'company_type': 'person'
-                    })
+                    }
+                    self.update(busqueda)
                     self.last_update = fields.Datetime.now()
+                    res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                    return res
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
-    def verify_dni_apiperu(self, token):
-        if not self.vat:
+    def verify_dni_apiperu(self, token, nro_documento):
+        if not nro_documento:
             raise UserError("Debe seleccionar un DNI")
-        endpoint = "https://apiperu.dev/api/dni/%s" % self.vat
+        endpoint = "https://apiperu.dev/api/dni/%s" % nro_documento
         headers = {
             "Authorization": "Bearer %s" % token,
             "Content-Type": "application/json",
@@ -227,17 +284,20 @@ class ResPartner(models.Model):
         if result.status_code == 200:
             result_json = result.json()
             if result_json['success'] == True:
-                self.update({
+                busqueda = {
                     'name': result_json['data']['nombre_completo'].strip(",").upper(),
                     'company_type': 'person'
-                })
+                }
+                self.update(busqueda)
                 self.last_update = fields.Datetime.now()
+                res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                return res
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
-    def verify_ruc_apiperu(self, token):
+    def verify_ruc_apiperu(self, token, nro_documento):
         district_obj = self.env['l10n_pe.res.city.district']
-        endpoint = "https://apiperu.dev/api/ruc/%s" % self.vat
+        endpoint = "https://apiperu.dev/api/ruc/%s" % nro_documento
         headers = {
             "Authorization": "Bearer %s" % token,
             "Content-Type": "application/json",
@@ -254,7 +314,7 @@ class ResPartner(models.Model):
                         district = district_obj.search(
                             [('code', '=', result_json['data']['ubigeo'][2])])
 
-                    self.update({
+                    busqueda = {
                         'name': result_json['data']['nombre_o_razon_social'],
                         'legal_name': result_json['data']['nombre_o_razon_social'],
                         'commercial_name': result_json['data']['nombre_o_razon_social'],
@@ -266,18 +326,24 @@ class ResPartner(models.Model):
                         'state_sunat': result_json['data']['estado'],
                         'condition_sunat': result_json['data']['condicion'],
                         'company_type': 'company'
-                    })
+                    }
+                    self.update(busqueda)
                     self.last_update = fields.Datetime.now()
+                    res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                    return res
                 elif ruc[0:2] == '10':
-                    self.update({
+                    busqueda = {
                         'name': result_json['data']['nombre_o_razon_social'],
                         'legal_name': result_json['data']['nombre_o_razon_social'],
                         'commercial_name': result_json['data']['nombre_o_razon_social'],
                         'state_sunat': result_json['data']['estado'],
                         'condition_sunat': result_json['data']['condicion'],
                         'company_type': 'person'
-                    })
+                    }
+                    self.update(busqueda)
                     self.last_update = fields.Datetime.now()
+                    res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
+                    return res
 
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
