@@ -33,7 +33,15 @@
                         </span>
                         <span class='edit-buttons' id='busqueda-boton' style="position:relative;right: 0px;top:0px;">
                             <div class='button busqueda-datos'><i class='fa fa-search' /></div>
-                        </span>
+                        </span> 
+                        <span class='edit-buttons' id='busqueda-boton-2' style="position:relative;right: 0px;top:0px;">
+                            <div class='button busqueda-2' t-on-click='_busquedaCo2'><i class='fa fa-archive' /></div>
+                        </span> 
+                        <br/>    
+                        <div class="client-detail" style="width:auto">                
+                            <span class="label" style="width:auto">Tipo Contacto</span>
+                            <input class="detail client-type" name="company_type" readonly="true" t-att-value="props.partner.company_type || ''" style="border-block:none;width:auto;background:content-box;"/>              
+                        </div>  
                     </div>
                 </div>
                 <br/>
@@ -48,7 +56,7 @@
                         <div class="client-detail">
                             <span class="label">Country</span>
                             <select class="detail client-address-country needsclick" name="country_id"
-                                    t-on-change="captureChange">
+                                t-on-change="captureChange">
                                 <option value="">None</option>
                                 <t t-foreach="env.pos.countries" t-as="country" t-key="country.id">
                                     <option t-att-value="country.id"
@@ -61,7 +69,7 @@
                         <div class="client-detail">
                             <span class="label">Departamento</span>
                             <select class="detail client-address-states needsclick" name="state_id" id="client-address-states"
-                                    t-on-change="captureChange">
+                                t-on-change="captureChange">
                                 <option value="">None</option>
                                 <t t-foreach="env.pos.states" t-as="state" t-key="state.id">
                                     <!-- <option t-if="props.partner.country_id[0] == state.country_id[0]" -->
@@ -139,18 +147,18 @@
                                 t-on-change="captureChange"
                                 t-att-value="props.partner.phone || ''" />
                         </div>
-                        <div class="client-detail" id="state-sunat-class" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
+                        <div class="client-detail" id="state-sunat-div" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
                             <span class="label">Est.SUNAT</span>
                             <input class="detail state-sunat-class" name="state_sunat" t-on-change="captureChange" readonly="true"
                                 t-att-value="props.partner.state_sunat || ''" t-att-style="props.partner.state_sunat === 'ACTIVO' ? 'background:#22e944c7;' : (props.partner.state_sunat ? 'background:#d96161c7;' : 'background:white;')"/> 
                             <br/>
-                            <span t-if="props.partner.state_sunat != 'ACTIVO' &amp;&amp; props.partner.state_sunat" style="background:red;color:white">Si no está ACTIVO, no se podrá facturar con SUNAT. ↑ </span>
+                            <span t-att-hidden="!(props.partner.state_sunat != 'ACTIVO' &amp;&amp; props.partner.state_sunat)" id="alerta-state-sunat" style="background:red;color:white">Si no está ACTIVO, no se podrá facturar con SUNAT. ↑ </span>
                         </div>
-                        <div class="client-detail" id="condition-sunat-class" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
+                        <div class="client-detail" id="condition-sunat-div" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
                             <span class="label">Cond.SUNAT</span>
                             <input class="detail  condition-sunat-class" name="condition_sunat" t-on-change="captureChange" readonly="true"
                                 t-att-value="props.partner.condition_sunat || ''" t-att-style="props.partner.condition_sunat === 'HABIDO' ? 'background:#22e944c7;' : (props.partner.state_sunat ? 'background:#d96161c7;' : 'background:white;')"/> 
-                            <span t-if="props.partner.condition_sunat != 'HABIDO' &amp;&amp; props.partner.state_sunat" style="background:red;color:white">ATENCIÓN, no Habido ↑. </span>
+                            <span t-att-hidden="!(props.partner.condition_sunat != 'HABIDO' &amp;&amp; props.partner.state_sunat)" id="alerta-condition-sunat" style="background:red;color:white">ATENCIÓN, no Habido ↑. </span>
                         </div>
                         <div class="client-detail">
                             <span class="label">Barcode</span>

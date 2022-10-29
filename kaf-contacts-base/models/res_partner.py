@@ -154,13 +154,19 @@ class ResPartner(models.Model):
 
     @api.onchange('vat', 'l10n_latam_identification_type_id')
     def _onchange_identification(self):
-        if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
-            tipo_documento = 'dni'
-            print(self.l10n_latam_identification_type_id.name)
-        elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-            tipo_documento = 'ruc'
-            print(self.l10n_latam_identification_type_id.name)
-        self.consulta_datos(tipo_documento, self.vat, format='json')
+        #tipo_docc = self.l10n_latam_identification_type_id.name
+        #_logger.info('***************variables: {0}'.format(tipo_docc))
+        tipo_doc = self.l10n_latam_identification_type_id.name
+        tipo_doc = tipo_doc.lower()
+        #_logger.info('***************variables: {0}'.format(tipo_doc))
+        if (tipo_doc == 'ruc' or tipo_doc == 'dni'):
+            if(self.vat):
+               # _logger.info('******************************entro a la busqueda')
+                self.consulta_datos(tipo_doc, self.vat, format='json')
+        else:
+            #_logger.info('******************************retornado')
+            return
+        
         # token = ''
         # nro_documento = self.vat
         # if self.company_id:
@@ -238,7 +244,6 @@ class ResPartner(models.Model):
                     if not district.exists():
                         district = district_obj.search(
                             [('code', '=', result_json['ubigeo'])])
-
                     busqueda = {
                         'name': result_json['razonSocial'],
                         'legal_name': result_json['razonSocial'],
@@ -344,7 +349,6 @@ class ResPartner(models.Model):
                     self.last_update = fields.Datetime.now()
                     res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
                     return res
-
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 

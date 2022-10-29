@@ -6,7 +6,7 @@ var OrderSuper = models.Order;
 var _posModelSuper = models.PosModel.prototype;
 
 models.load_fields("res.company", ["street_name"]);
-models.load_fields("res.partner", ["l10n_latam_identification_type_id","city_id","l10n_pe_district","state_sunat","condition_sunat"]);
+models.load_fields("res.partner", ["l10n_latam_identification_type_id","city_id","l10n_pe_district","state_sunat","condition_sunat","company_type"]);
 
 models.Order = models.Order.extend({
     initialize: function (attributes, options) {
