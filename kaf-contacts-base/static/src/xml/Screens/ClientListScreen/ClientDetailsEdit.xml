@@ -35,7 +35,7 @@
                             <div class='button busqueda-datos'><i class='fa fa-search' /></div>
                         </span> 
                         <span class='edit-buttons' id='busqueda-boton-2' style="position:relative;right: 0px;top:0px;">
-                            <div class='button busqueda-2' t-on-click='_busquedaCo2'><i class='fa fa-archive' /></div>
+                            <div class='button busqueda-2' t-on-click='_busquedaActualizar'><i class='fa fa-archive' /></div>
                         </span> 
                         <br/>    
                         <div class="client-detail" style="width:auto">                

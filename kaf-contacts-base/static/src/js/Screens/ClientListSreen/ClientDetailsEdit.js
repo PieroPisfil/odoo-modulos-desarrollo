@@ -74,7 +74,6 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				this.changes['city_id'] = ""
 				$('.client-address-distrito').val('')
 				this.changes['l10n_pe_district'] = ""
-				//this.render.bind(this)
 				this.render();
 		    }
 			get obtener_id_state() {
@@ -84,7 +83,6 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				this.id_provincia = this.changes.city_id;
 				$('.client-address-distrito').val('')
 				this.changes['l10n_pe_district'] = ""
-				//this.render.bind(this)
 				this.render();
 		    }
 			get obtener_id_provincia() {
@@ -107,17 +105,16 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				}
 				this.render();
 			}
-			_busquedaCo2(){
-				console.log('segundo click')
-				//this.id_provincia = this.changes.city_id;
+			_busquedaActualizar(){
 				let a = this.changes.city_id
-				//console.log(a)
 				$(`.client-address-provincia option[value="${a}"]`).attr('selected', 'selected')
-				//this.id_distrito = this.changes.l10n_pe_district;
 				let b = this.changes.l10n_pe_district;
-				//console.log(b)
 				$(`.client-address-distrito option[value="${b}"]`).attr('selected', 'selected')
-				//this.render();
+/* 				let c = this.changes['state_sunat']
+				$('input[name="state_sunat"]').val(c);
+				let d = this.changes['condition_sunat']
+				$('input[name="condition_sunat"]').val(d); */
+				this.render();
 			}
 			_busquedaContacto(){
 				var self = this;
@@ -152,8 +149,7 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				let intervalBusqueda = setInterval(() =>{
 					if(flag_busqueda){
 						$('.busqueda-2').click()
-						console.log('entra if')
-					}else{console.log('fuera if')}
+					}
 				}, 250);
 				
 				this.func_busqueda (tipo_doc, vat).then(() => {
@@ -163,91 +159,6 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 						clearInterval(intervalBusqueda)
 					},250)
 				})
-				
-				
-/* 				this.func_busqueda (tipo_doc, vat).finally(()=>{
-					$('.busqueda-2').click()
-				}) */
-				/* let parametros = [tipo_doc == "DNI" ? "dni" : "ruc", vat]
-		        let contents = $('.client-details');
-				$('#mensajecc').hide()
-		        rpc.query({
-		            model: 'res.partner',
-		            method: 'consulta_datos',
-		            args: parametros,
-		        }).then(function (datos) {
-					if (datos.error) {
-	                    self.showPopup('ErrorTracebackPopup', {
-	                        'title': 'Alerta 1!',
-	                        'body': datos.message,
-	                    });
-	                } else if (datos.data) {
-						if(!datos.data.success) {
-	                        self.showPopup('ErrorTracebackPopup', {
-	                            'title': 'Alerta 2!',
-	                            'body': datos.data.message,
-	                        });
-	                        return;
-	                    }
-	                    var respuesta = datos.data.data;
-						self.rr = respuesta
-						//console.log(self.rr)
-						contents.find('input[name="name"]').val(respuesta.name);
-						self.changes['name'] = respuesta.name;
-						contents.find('input[name="company_type"]').val(respuesta.company_type);
-						self.changes['company_type'] = respuesta.company_type;
-						if (tipo_doc === 'RUC') {
-							contents.find('input[name="state_sunat"]').val(respuesta.state_sunat);
-							self.changes['state_sunat'] = respuesta.state_sunat;
-							contents.find('input[name="condition_sunat"]').val(respuesta.condition_sunat);
-							self.changes['condition_sunat'] = respuesta.condition_sunat;
-	                        contents.find('input[name="street"]').val(respuesta.street);
-							self.changes['street'] = respuesta.street;
-							if (respuesta.zip){
-								contents.find('input[name="zip"]').val(respuesta.zip);
-								self.changes['zip'] = respuesta.zip;
-
-								contents.find('select[name="state_id"]').val(respuesta.state_id);
-								self.changes['state_id'] = respuesta.state_id;
-								self._changeState();
-								//self.id_departamento = self.changes.city_id;	
-								//self.render();
-								
-								contents.find('select[name="city_id"]').val(respuesta.city_id);
-								self.changes['city_id'] = respuesta.city_id;
-								//self._changeProvincia();		
-								self.id_provincia = self.changes.city_id;					
-								self.render();
-								
-								//contents.find('select[name="l10n_pe_district"]').val(respuesta.l10n_pe_district);
-								self.changes['l10n_pe_district'] = respuesta.l10n_pe_district;
-								self.render();
-							}
-							//console.log(respuesta.zip)
-							//console.log(respuesta.city_id)
-							//console.log(contents.find('select[name="l10n_pe_district"]').val())
-							//Algunas advertencias
-							let state_sunat = self.changes['state_sunat']
-							if(state_sunat == 'ACTIVO') {
-								$('#alerta-state-sunat').attr("hidden",true)
-								$('.state-sunat-class').css("background", "#22e944c7")
-							}
-							else{
-								$('#alerta-state-sunat').attr("hidden",false)
-								$('.state-sunat-class').css("background", "#d96161c7")
-							}
-							let condition_sunat = self.changes['condition_sunat']
-							if(condition_sunat == 'HABIDO') {
-								$('#alerta-condition-sunat').attr("hidden",true)
-								$('.condition-sunat-class').css("background", "#22e944c7")
-							}
-							else{
-								$('#alerta-condition-sunat').attr("hidden",false)
-								$('.state-sunat-class').css("background", "#d96161c7")
-							}
-						}
-					}
-				}); */
 			}
 
 			async func_busqueda (tipo_doc, vat) {
@@ -262,19 +173,18 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				})
 				if (response.error) {
 					self.showPopup('ErrorTracebackPopup', {
-						'title': 'Alerta 1!',
-						'body': response.message,
+						'title': 'Alerta de consulta!',
+						'body': `${response.message}`,
 					});
 					return;
 				} else if (response.data) {
-					if(!response.data.success) {
+					/* if(!response.data.success) {
 						self.showPopup('ErrorTracebackPopup', {
-							'title': 'Alerta 2!',
+							'title': 'Alerta de DATOS!',
 							'body': response.data.message,
 						});
 						return;
-					}
-					//console.log(response);
+					} */
 					respuesta = response.data.data;
 					contents.find('input[name="name"]').val(respuesta.name);
 					self.changes['name'] = respuesta.name;

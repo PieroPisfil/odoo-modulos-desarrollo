@@ -101,7 +101,7 @@ class ResPartner(models.Model):
             
     @api.model
     def consulta_datos(self, tipo_documento, nro_documento, format='json'):
-        res = {'error': True, 'message': None, 'data': {}}
+        res = {'error': True, 'message': 'Error de consulta, puede que el ruc este inactivo.', 'data': {}}
         # Si el nro. de doc. ya existe
         # res_partner = self.search([('vat', '=', nro_documento)]).exists()
         # if res_partner:
@@ -154,7 +154,6 @@ class ResPartner(models.Model):
 
     @api.onchange('vat', 'l10n_latam_identification_type_id')
     def _onchange_identification(self):
-        #tipo_docc = self.l10n_latam_identification_type_id.name
         #_logger.info('***************variables: {0}'.format(tipo_docc))
         tipo_doc = self.l10n_latam_identification_type_id.name
         tipo_doc = tipo_doc.lower()
@@ -166,47 +165,6 @@ class ResPartner(models.Model):
         else:
             #_logger.info('******************************retornado')
             return
-        
-        # token = ''
-        # nro_documento = self.vat
-        # if self.company_id:
-        #     tipo_busqueda = self.company_id.busqueda_ruc
-        #     if tipo_busqueda == 'sinapi':
-        #         return
-        #     elif tipo_busqueda == 'apisperu':
-        #         token = self.company_id.token_apisperu
-        #     elif tipo_busqueda == 'apiperu':
-        #         token = self.company_id.token_apiperu
-        # else:
-        #     tipo_busqueda = self.env.company.busqueda_ruc
-        #     if tipo_busqueda == 'sinapi':
-        #         return
-        #     elif tipo_busqueda == 'apisperu':
-        #         token = self.env.company.token_apisperu
-        #     elif tipo_busqueda == 'apiperu':
-        #         token = self.env.company.token_apiperu
-        # if self.l10n_latam_identification_type_id and self.vat:
-        #     try:
-        #         if tipo_busqueda == 'apisperu':
-        #             if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
-        #                 if len(self.vat) != 8:
-        #                     return
-        #                 self.verify_dni_apisperu(token, nro_documento)
-        #             elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-        #                 if len(self.vat) != 11:
-        #                     return
-        #                 self.verify_ruc_apisperu(token, nro_documento)
-        #         elif tipo_busqueda == 'apiperu':
-        #             if self.l10n_latam_identification_type_id.l10n_pe_vat_code == '1':
-        #                 if len(self.vat) != 8:
-        #                     return
-        #                 self.verify_dni_apiperu(token, nro_documento)
-        #             elif self.l10n_latam_identification_type_id.l10n_pe_vat_code == '6':
-        #                 if len(self.vat) != 11:
-        #                     return
-        #                 self.verify_ruc_apiperu(token, nro_documento)
-        #     except Exception as ex:
-        #         _logger.error('Ha ocurrido un error {}'.format(ex))
         
 
     def verify_dni_apisperu(self, token, nro_documento):
@@ -226,6 +184,8 @@ class ResPartner(models.Model):
                 self.last_update = fields.Datetime.now()
                 res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
                 return res
+            else:
+                return {'error': True, 'message': 'Error, no se puede obtener datos de este DNI'}
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -274,6 +234,8 @@ class ResPartner(models.Model):
                     self.last_update = fields.Datetime.now()
                     res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
                     return res
+            else:
+                return {'error': True, 'message': 'Error, no se puede obtener datos de este DNI'}
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -297,6 +259,8 @@ class ResPartner(models.Model):
                 self.last_update = fields.Datetime.now()
                 res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
                 return res
+            else:
+                return {'error': True, 'message': 'Error, no se puede obtener datos de este DNI'}
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
@@ -349,6 +313,8 @@ class ResPartner(models.Model):
                     self.last_update = fields.Datetime.now()
                     res = {'error': False, 'message': 'Ok', 'data': {'success': True, 'data': busqueda}}
                     return res
+            else:
+                return {'error': True, 'message': 'Error, no se puede obtener datos de este RUC'}
         else:
             return {'error': True, 'message': 'Error al intentar obtener datos'}
 
