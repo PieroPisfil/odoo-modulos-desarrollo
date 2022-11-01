@@ -19,6 +19,7 @@ odoo.define('kaf-contacts-base.ClientListScreen', function(require) {
         _cretenewCustomerEdit(){
             let valor_vat = $('.searchbox-client input').val()
             let tipo_vat = 1;
+            $('#button-new-customer-original').click()
             const regex = /^[0-9]*$/;
             if(valor_vat.length == 11 && regex.test(valor_vat) && (valor_vat.substr(0,2) == '20' || valor_vat.substr(0,2) == '10') ) {
                 tipo_vat = 4
@@ -26,13 +27,9 @@ odoo.define('kaf-contacts-base.ClientListScreen', function(require) {
                 //this.changes['l10n_latam_identification_type_id'] = '4'
             } else if(valor_vat.length == 8 && regex.test(valor_vat)){
                 tipo_vat = 5               
-            } else if (valor_vat.length == 0) {
-                $('#button-new-customer-original').click()
-                return
             }
-            $('#button-new-customer-original').click()
-            //console.log(valor_busqueda)
             setTimeout(() => {
+                //$('.l10n_latam_identification_type_id').val(`${tipo_vat}`)
                 $(`.l10n_latam_identification_type_id option[value="${tipo_vat}"]`).attr('selected', 'selected')
                 $('#vat').val(`${valor_vat}`)
                 $('#busqueda-datos').click()

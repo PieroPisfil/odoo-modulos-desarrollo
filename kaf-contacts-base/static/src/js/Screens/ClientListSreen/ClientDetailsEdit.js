@@ -100,6 +100,7 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 			_changeTypeIdentification(){
 				let div2 = $(".l10n_latam_identification_type_id")[0];
 				let tipo_doc = div2.options[div2.selectedIndex].text
+				console.log(div2.options[div2.selectedIndex].value)
 				$('#busqueda-boton').show();
 				if (tipo_doc == 'RUC'){
 					$('#state-sunat-div').show();
@@ -131,6 +132,8 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 				let vat = $("#vat").val();
 				let div2 = $(".l10n_latam_identification_type_id")[0];
 				let tipo_doc = div2.options[div2.selectedIndex].text
+				self.changes['l10n_latam_identification_type_id'] = div2.options[div2.selectedIndex].value
+				self.changes['vat'] = vat
                 if(tipo_doc != 'DNI' && tipo_doc !='RUC'){
                 	return;
                 }
@@ -211,6 +214,8 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 					self.changes['name'] = respuesta.name;
 					contents.find('input[name="company_type"]').val(respuesta.company_type);
 					self.changes['company_type'] = respuesta.company_type;
+					contents.find('input[id="vat"]').val(respuesta.vat);
+					self.changes['vat'] = respuesta.vat;
 					if (tipo_doc === 'RUC') {
 						contents.find('input[name="state_sunat"]').val(respuesta.state_sunat);
 						self.changes['state_sunat'] = respuesta.state_sunat;

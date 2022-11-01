@@ -178,7 +178,8 @@ class ResPartner(models.Model):
             if result_json['dni']:
                 busqueda = {
                     'name': result_json['apellidoPaterno'].strip().upper() + ' ' + result_json['apellidoMaterno'].strip().upper() + ' ' + result_json['nombres'].strip().upper(),
-                    'company_type': 'person'
+                    'company_type': 'person',
+                    'vat': nro_documento
                 }
                 self.update(busqueda)
                 self.last_update = fields.Datetime.now()
@@ -215,7 +216,8 @@ class ResPartner(models.Model):
                         'l10n_pe_district': district.id,
                         'state_sunat': result_json['estado'],
                         'condition_sunat': result_json['condicion'],
-                        'company_type': 'company'
+                        'company_type': 'company',
+                        'vat': nro_documento
                     }
                     self.update(busqueda)
                     self.last_update = fields.Datetime.now()
@@ -228,7 +230,8 @@ class ResPartner(models.Model):
                         'commercial_name': result_json['razonSocial'],
                         'state_sunat': result_json['estado'],
                         'condition_sunat': result_json['condicion'],
-                        'company_type': 'person'
+                        'company_type': 'person',
+                        'vat': nro_documento                        
                     }
                     self.update(busqueda)
                     self.last_update = fields.Datetime.now()
@@ -253,7 +256,8 @@ class ResPartner(models.Model):
             if result_json['success'] == True:
                 busqueda = {
                     'name': result_json['data']['nombre_completo'].strip(",").upper(),
-                    'company_type': 'person'
+                    'company_type': 'person',
+                    'vat': nro_documento
                 }
                 self.update(busqueda)
                 self.last_update = fields.Datetime.now()
@@ -294,7 +298,8 @@ class ResPartner(models.Model):
                         'l10n_pe_district': district.id,
                         'state_sunat': result_json['data']['estado'],
                         'condition_sunat': result_json['data']['condicion'],
-                        'company_type': 'company'
+                        'company_type': 'company',
+                        'vat': nro_documento    
                     }
                     self.update(busqueda)
                     self.last_update = fields.Datetime.now()
@@ -307,7 +312,8 @@ class ResPartner(models.Model):
                         'commercial_name': result_json['data']['nombre_o_razon_social'],
                         'state_sunat': result_json['data']['estado'],
                         'condition_sunat': result_json['data']['condicion'],
-                        'company_type': 'person'
+                        'company_type': 'person',
+                        'vat': nro_documento
                     }
                     self.update(busqueda)
                     self.last_update = fields.Datetime.now()
