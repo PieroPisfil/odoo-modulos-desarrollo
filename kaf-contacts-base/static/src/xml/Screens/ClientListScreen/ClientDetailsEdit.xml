@@ -32,9 +32,9 @@
                             <input class='detail vat' id="vat" style="background: #ffec84;" name='vat' t-att-value='props.partner.vat || ""' t-on-change="captureChange"></input>
                         </span>
                         <span class='edit-buttons' id='busqueda-boton' style="position:relative;right: 0px;top:0px;">
-                            <div class='button busqueda-datos'><i class='fa fa-search' /></div>
+                            <div class='button busqueda-datos' id="busqueda-datos"><i class='fa fa-search' /></div>
                         </span> 
-                        <span class='edit-buttons' id='busqueda-boton-2' style="position:relative;right: 0px;top:0px;">
+                        <span class='edit-buttons' id='busqueda-boton-2' style="position:relative;right: 0px;top:0px;" hidden="true">
                             <div class='button busqueda-2' t-on-click='_busquedaActualizar'><i class='fa fa-archive' /></div>
                         </span> 
                         <br/>    
@@ -147,14 +147,14 @@
                                 t-on-change="captureChange"
                                 t-att-value="props.partner.phone || ''" />
                         </div>
-                        <div class="client-detail" id="state-sunat-div" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
+                        <div class="client-detail" id="state-sunat-div">
                             <span class="label">Est.SUNAT</span>
                             <input class="detail state-sunat-class" name="state_sunat" t-on-change="captureChange" readonly="true"
                                 t-att-value="props.partner.state_sunat || ''" t-att-style="props.partner.state_sunat === 'ACTIVO' ? 'background:#22e944c7;' : (props.partner.state_sunat ? 'background:#d96161c7;' : 'background:white;')"/> 
                             <br/>
                             <span t-att-hidden="!(props.partner.state_sunat != 'ACTIVO' &amp;&amp; props.partner.state_sunat)" id="alerta-state-sunat" style="background:red;color:white">Si no está ACTIVO, no se podrá facturar con SUNAT. ↑ </span>
                         </div>
-                        <div class="client-detail" id="condition-sunat-div" t-if="props.partner.l10n_latam_identification_type_id ? (props.partner.l10n_latam_identification_type_id[0] == 4) : true">
+                        <div class="client-detail" id="condition-sunat-div">
                             <span class="label">Cond.SUNAT</span>
                             <input class="detail  condition-sunat-class" name="condition_sunat" t-on-change="captureChange" readonly="true"
                                 t-att-value="props.partner.condition_sunat || ''" t-att-style="props.partner.condition_sunat === 'HABIDO' ? 'background:#22e944c7;' : (props.partner.state_sunat ? 'background:#d96161c7;' : 'background:white;')"/> 

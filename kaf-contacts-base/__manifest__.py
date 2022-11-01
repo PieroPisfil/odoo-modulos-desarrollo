@@ -26,7 +26,8 @@
             'kaf-contacts-base/static/src/js/pos_image_field.js',
             'kaf-contacts-base/static/src/js/models.js',
             'kaf-contacts-base/static/src/css/pos_customize.css',
-            'kaf-contacts-base/static/src/js/Screens/ClientListSreen/ClientDetailsEdit.js',
+            'kaf-contacts-base/static/src/js/Screens/**/*',
+            'kaf-contacts-base/static/src/js/Screens/ClientListSreen/*',
         ],
         'web.assets_qweb': [
             'kaf-contacts-base/static/src/xml/Chrome.xml',

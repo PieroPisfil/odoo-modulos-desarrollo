@@ -1,4 +1,4 @@
-odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
+odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
     'use strict';
 
     const ClientDetailsEdit = require('point_of_sale.ClientDetailsEdit');
@@ -33,9 +33,9 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 	        	var self = this;
 				$('.busqueda-datos').off('click', '');
 		        $('.busqueda-datos').on('click', self._busquedaContacto.bind(self));
-				/* $('.busqueda-2').off('click', '');
-		        $('.busqueda-2').on('click', self._busquedaCo2.bind(self)); */
-				this._changeCountry();
+				//this.id_pais = $('.client-address-country').val();
+				this.id_pais = this.changes.country_id
+				this._hideshowPeru();
 				this.id_departamento = this.changes.state_id;
 				this.id_provincia = this.changes.city_id;
 				this._changeTypeIdentification();
@@ -48,11 +48,7 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 
 				$('.l10n_latam_identification_type_id').on('change', self._changeTypeIdentification.bind(self));
 			}
-			_changeCountry() {
-		        if (!$(".client-address-country").val()) {
-		            return;
-		        }
-				this.id_pais = $('.client-address-country').val();
+			_hideshowPeru(){
 				let div = $(".client-address-country")[0];
 				if(div.options[div.selectedIndex].text == 'Perú'){
 		          $('#client-address-provincia').show();
@@ -63,6 +59,19 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 		          $('#client-address-distrito').hide();
 				  $('#client-address-external-city').show();
 		        }
+			}
+			_changeCountry() {
+		        if (!$(".client-address-country").val()) {
+		            return;
+		        }
+				this.id_pais = this.changes.country_id
+				this._hideshowPeru();
+				$('#client-address-states').val('')
+				this.changes['state_id'] = ""
+				$('.client-address-provincia').val('')
+				this.changes['city_id'] = ""
+				$('.client-address-distrito').val('')
+				this.changes['l10n_pe_district'] = ""
 				this.render();
 		    }
 			obtener_id_pais() {	
@@ -95,11 +104,15 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				if (tipo_doc == 'RUC'){
 					$('#state-sunat-div').show();
 					$('#condition-sunat-div').show();
+					$('.client-type').val('company')
+					this.changes['company_type'] = "company"
 				}
 				else{
 					if(tipo_doc != 'DNI'){
 						$('#busqueda-boton').hide();
 					}
+					$('.client-type').val('person')
+					this.changes['company_type'] = "person"
 					$('#state-sunat-div').hide();
 					$('#condition-sunat-div').hide();
 				}
@@ -110,10 +123,6 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 				$(`.client-address-provincia option[value="${a}"]`).attr('selected', 'selected')
 				let b = this.changes.l10n_pe_district;
 				$(`.client-address-distrito option[value="${b}"]`).attr('selected', 'selected')
-/* 				let c = this.changes['state_sunat']
-				$('input[name="state_sunat"]').val(c);
-				let d = this.changes['condition_sunat']
-				$('input[name="condition_sunat"]').val(d); */
 				this.render();
 			}
 			_busquedaContacto(){
@@ -144,14 +153,26 @@ odoo.define('solse_vat_pos_pe.ClientDetailsEdit', function(require) {
 						return;
 					}
 				}
-				let flag_busqueda = false ;
+				//RESET de TODO
+				let contents = $('.client-details');
+				self.changes['zip'] = null;
+				contents.find('input[name="zip"]').val('');
+				self.changes['city_id'] = null;
+				contents.find('select[name="city_id"]').val('');				
+				self.changes['l10n_pe_district'] = null;
+				contents.find('select[name="l10n_pe_district"]').val('');
+				self.changes['name'] = null;
+				contents.find('input[name="name"]').val('');
+				self.changes['street'] = null;
+				contents.find('input[name="street"]').val('');
+				//////////////////////////////////////////////7
 
+				let flag_busqueda = false ;
 				let intervalBusqueda = setInterval(() =>{
 					if(flag_busqueda){
 						$('.busqueda-2').click()
 					}
 				}, 250);
-				
 				this.func_busqueda (tipo_doc, vat).then(() => {
 					flag_busqueda = true;					
 				}).finally(() => {
