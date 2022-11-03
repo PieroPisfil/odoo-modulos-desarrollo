@@ -100,7 +100,6 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 			_changeTypeIdentification(){
 				let div2 = $(".l10n_latam_identification_type_id")[0];
 				let tipo_doc = div2.options[div2.selectedIndex].text
-				console.log(div2.options[div2.selectedIndex].value)
 				$('#busqueda-boton').show();
 				if (tipo_doc == 'RUC'){
 					$('#state-sunat-div').show();
@@ -134,6 +133,14 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 				let tipo_doc = div2.options[div2.selectedIndex].text
 				self.changes['l10n_latam_identification_type_id'] = div2.options[div2.selectedIndex].value
 				self.changes['vat'] = vat
+				//Filtros necesarios para correcto funcionamiento y no guardar vat repetidos
+				if(tipo_doc == 'VAT' || (tipo_doc == 'RUC' && vat.substr(0,2) == '20')){
+					$('.client-detail input[name="company_type"]').val('company');
+					self.changes['company_type'] = 'company';
+				} else {
+					$('.client-detail input[name="company_type"]').val('person');
+					self.changes['company_type'] = 'person';
+				}
                 if(tipo_doc != 'DNI' && tipo_doc !='RUC'){
                 	return;
                 }
@@ -157,7 +164,7 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 					}
 				}
 				//RESET de TODO
-				let contents = $('.client-details');
+/* 				let contents = $('.client-details');
 				self.changes['zip'] = null;
 				contents.find('input[name="zip"]').val('');
 				self.changes['city_id'] = null;
@@ -167,7 +174,7 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 				self.changes['name'] = null;
 				contents.find('input[name="name"]').val('');
 				self.changes['street'] = null;
-				contents.find('input[name="street"]').val('');
+				contents.find('input[name="street"]').val(''); */
 				//////////////////////////////////////////////7
 
 				let flag_busqueda = false ;
@@ -209,6 +216,18 @@ odoo.define('kaf-contacts-base.ClientDetailsEdit', function(require) {
 						});
 						return;
 					} */
+
+					self.changes['zip'] = null;
+					contents.find('input[name="zip"]').val('');
+					self.changes['city_id'] = null;
+					contents.find('select[name="city_id"]').val('');				
+					self.changes['l10n_pe_district'] = null;
+					contents.find('select[name="l10n_pe_district"]').val('');
+					self.changes['name'] = null;
+					contents.find('input[name="name"]').val('');
+					self.changes['street'] = null;
+					contents.find('input[name="street"]').val('');
+
 					respuesta = response.data.data;
 					contents.find('input[name="name"]').val(respuesta.name);
 					self.changes['name'] = respuesta.name;

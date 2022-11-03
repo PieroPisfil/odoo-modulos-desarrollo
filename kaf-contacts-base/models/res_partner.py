@@ -98,15 +98,30 @@ class ResPartner(models.Model):
             self.l10n_pe_district = None
             self.city = None
             self.city_id = None
+
+    @api.model
+    def consulta_vat_existe(self, nro_documento, format='json'):
+        res_partner = self.search([('vat', '=', nro_documento), ('active', '=', True)]).exists()
+        if res_partner : 
+            res = {'error': True, 'message': 'Hay otro contacto con este Nro de Documento. Si es adrede, hacerlo en modulo de contactos.'} 
+            return res
+        else : 
+            res = {'error': False, 'message': 'Nohaycoincidencias'}
+            return res
             
     @api.model
     def consulta_datos(self, tipo_documento, nro_documento, format='json'):
         res = {'error': True, 'message': 'Error de consulta, puede que el ruc este inactivo.', 'data': {}}
         # Si el nro. de doc. ya existe
-        res_partner = self.search([('vat', '=', nro_documento)]).exists()
+        res_partner = self.search([('vat', '=', nro_documento), ('active', '=', True)]).exists()
         if res_partner:
            res['message'] = 'Nro de documento ya existe'
            return res
+        # if tipo_documento != 'ruc':
+        #     res_partner = self.search([('vat', '=', nro_documento), ('active', '=', True)]).exists()
+        #     if res_partner:
+        #         res['message'] = 'Nro de documento ya existe'
+        #         return res
         token = ''
         if self.company_id:
             tipo_busqueda = self.company_id.busqueda_ruc
@@ -367,10 +382,13 @@ class ResPartner(models.Model):
     def create(self, vals_list):
         for variables in vals_list:
             # Si el nro. de doc. ya existe
-            res_partner = self.search([('vat', '=', variables.get('vat'))]).exists()
-            if res_partner:
-                msg3 = 'Error: Contacto ya existe'
-                raise ValidationError(msg3)
+            if variables.get('company_type') == 'person':
+                res_partner = self.search([('vat', '=', variables.get('vat')), ('active', '=', True)]).exists()
+                if res_partner:
+                    msg3 = 'Error: Contacto ya existe'
+                    raise ValidationError(msg3)
+            if not variables.get('vat'):
+                raise ValidationError('Se necesita un Número de Documento, no debe estar vacío')
             company = self.env.company
             if not variables.get('l10n_pe_district') and not variables.get('city_id') and variables.get('state_id') == company.partner_id.state_id.id:
                 variables['l10n_pe_district'] = self._search_district()
