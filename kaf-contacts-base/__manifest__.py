@@ -2,10 +2,10 @@
 
 {
     'name': "kaf-contacts-base",
-    'summary': "Modulo personalizado para agregar campos a los usuarios.",
+    'summary': "Auto-completa datos de contactos usando una api de búsqueda según DNI o RUC",
     'version': '1.1',
     'description': """
-       Se quiere agregar campos para el modulo de contactos según Perú
+       Se quiere agregar campos para el modulo de contactos según Perú desde módulo Contactos o POS
     """,
     'author': "Piero Pisfil",
     'depends': [
