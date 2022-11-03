@@ -101,9 +101,13 @@ class ResPartner(models.Model):
 
     @api.model
     def consulta_vat_existe(self, nro_documento, format='json'):
-        res_partner = self.search([('vat', '=', nro_documento), ('active', '=', True)]).exists()
-        if res_partner : 
-            res = {'error': True, 'message': 'Hay otro contacto con este Nro de Documento. Si es adrede, hacerlo en modulo de contactos.'} 
+        #res_partner = self.search([('vat', '=', nro_documento), ('active', '=', True)]).exists()
+        query = """ SELECT vat FROM res_partner WHERE vat = '%s' AND active""" % (nro_documento)
+        self._cr.execute(query)
+        res_2 = self.env.cr.dictfetchall()
+        #_logger.info('***************response: {0}'.format(res_2))
+        if res_2 : 
+            res = {'error': True, 'message': 'Hay otro contacto con este Nro de Documento aquí o en otra compañia. Si es adrede, llamar al Administrador del sistema para hacer el contacto multiempresa desde módulo de contactos. Pasar como dato el Nro de Documneto/RUC/DNI.'} 
             return res
         else : 
             res = {'error': False, 'message': 'Nohaycoincidencias'}
