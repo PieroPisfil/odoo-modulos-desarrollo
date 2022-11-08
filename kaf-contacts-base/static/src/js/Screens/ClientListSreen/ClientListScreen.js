@@ -20,17 +20,22 @@ odoo.define('kaf-contacts-base.ClientListScreen', function(require) {
         _cretenewCustomerEdit(){
             let valor_vat = $('.searchbox-client input').val()
             let tipo_vat = 1;
+            if (!valor_vat){
+                $('#button-new-customer-original').click();
+                setTimeout(() => {
+                    $('.l10n_latam_identification_type_id').click()
+                    $(`.l10n_latam_identification_type_id option[value=""]`).attr('selected', 'selected')
+                },100)
+                return;
+            }
             $('#button-new-customer-original').click()
             const regex = /^[0-9]*$/;
             if(valor_vat.length == 11 && regex.test(valor_vat) && (valor_vat.substr(0,2) == '20' || valor_vat.substr(0,2) == '10') ) {
                 tipo_vat = 4
-                //$('.l10n_latam_identification_type_id option[value="4"]').attr('selected', 'selected')
-                //this.changes['l10n_latam_identification_type_id'] = '4'
             } else if(valor_vat.length == 8 && regex.test(valor_vat)){
                 tipo_vat = 5               
             } else if(valor_vat.length == 0){tipo_vat = 4}
             setTimeout(() => {
-                //$('.l10n_latam_identification_type_id').val(`${tipo_vat}`)
                 $(`.l10n_latam_identification_type_id option[value="${tipo_vat}"]`).attr('selected', 'selected')
                 $('#vat').val(`${valor_vat}`)
                 $('#busqueda-datos').click()
@@ -39,7 +44,12 @@ odoo.define('kaf-contacts-base.ClientListScreen', function(require) {
         _clickGuardar(){
             var self = this;
             let vat = $('#vat').val()
-            console.log(vat)
+            if(!vat){
+                self.showPopup('ErrorTracebackPopup', {
+                    'title': 'Nro. de documento vacío',
+                    'body': 'Se necesita un Número de Documento, no debe estar vacío',
+                });
+            }
             rpc.query({
                 model: 'res.partner',
                 method: 'consulta_vat_existe',

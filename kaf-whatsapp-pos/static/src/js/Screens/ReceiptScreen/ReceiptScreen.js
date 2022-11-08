@@ -21,10 +21,8 @@ odoo.define('kaf-whatsapp-pos.ReceiptScreen', function (require) {
                 this.orderReceipt = useRef('order-receipt');
                 /* useErrorHandlers();
                 onChangeOrder(null, (newOrder) => newOrder && this.render());
-                
                 const order = this.currentOrder;
                 const client = order.get_client();
-                this.orderUiState = useContext(order.uiState.ReceiptScreen);
                 this.orderUiState.inputEmail = this.orderUiState.inputEmail || (client && client.email) || '';
                 this.is_email = is_email; */
             }
@@ -44,9 +42,11 @@ odoo.define('kaf-whatsapp-pos.ReceiptScreen', function (require) {
                 console.log(number_phone)
                 try {
                     this.orderUiState['whatsappNotice'] = this.env._t('Enviando...');
-                    await this._sendReceiptToCustomerWhatsapp(number_phone);
+                    await this._sendReceiptToCustomerWhatsapp(number_phone).then(function(resultado) {
+                        console.log(resultado)
+                    })
                     this.orderUiState['whatsappSuccessful'] = true;
-                    this.orderUiState['whatsappNotice'] = this.env._t('Enviando...');
+                    this.orderUiState['whatsappNotice'] = this.env._t('Enviado');
                 } catch (error) {
                     this.orderUiState['whatsappSuccessful'] = false;
                     this.orderUiState['whatsappNotice'] = this.env._t('Error al enviar, por favor intente de nuevo.');

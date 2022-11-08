@@ -21,6 +21,7 @@
                     <div>
                         <h3 class='label'># Documento DNI/RUC</h3>
                         <select class='detail needsclick l10n_latam_identification_type_id' style="background: gold;width:6rem;" name='l10n_latam_identification_type_id' t-on-change="captureChange" >
+                            <option value="">None</option>
                             <t t-foreach='env.pos.doc_types' t-as='doc_type' t-key='doc_type.id'>
                                 <option t-att-value="doc_type.id" t-att-selected="props.partner.l10n_latam_identification_type_id ? ((doc_type.id === props.partner.l10n_latam_identification_type_id[0]) ? true : undefined) : undefined">
                                     <t t-esc='doc_type.name'/>

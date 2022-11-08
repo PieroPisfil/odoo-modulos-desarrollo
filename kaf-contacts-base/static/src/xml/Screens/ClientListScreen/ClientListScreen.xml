@@ -57,7 +57,7 @@
                         <div id="boton-guardar-original" hidden="true" class="button" t-if="state.detailIsShown" t-on-click="trigger('click-save')">
                             <i class="fa fa-floppy-o"/>
                             <t t-if="!env.isMobile">
-                                <span> Save</span>
+                                <span> Save/Edit</span>
                             </t>
                         </div>
                         <div t-if="!state.detailIsShown" class="searchbox-client top-content-center">

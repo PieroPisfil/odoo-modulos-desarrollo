@@ -9,6 +9,8 @@ odoo.define('kaf-contacts-base.ClientLine', function(require) {
             _clickEditPersonalizado() {
                 $('#edit-client-button').click()
                 setTimeout(() => {
+                    $('#boton-guardar-reemplazo').attr('hidden', true)
+                    $('#boton-guardar-original').attr('hidden', false)
                     $('.client-name').attr('readonly', true)
                     $('#vat').attr('readonly', true)
                     $("select[name='l10n_latam_identification_type_id']").attr('disabled', true) 

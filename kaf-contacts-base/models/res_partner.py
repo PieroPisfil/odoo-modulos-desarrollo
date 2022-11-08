@@ -391,8 +391,12 @@ class ResPartner(models.Model):
                 if res_partner:
                     msg3 = 'Error: Contacto ya existe'
                     raise ValidationError(msg3)
-            if not variables.get('vat'):
-                raise ValidationError('Se necesita un Número de Documento, no debe estar vacío')
+            if not variables.get('l10n_latam_identification_type_id'):
+                raise ValidationError('Se necesita un Tipo de Documento, no debe estar vacío')
+            if variables.get('l10n_latam_identification_type_id') == 4 or variables.get('l10n_latam_identification_type_id') == 5:
+                vvat = variables.get('vat')
+                if not vvat.isnumeric():
+                    raise ValidationError('RUC/DNI deben ser solo números')
             company = self.env.company
             if not variables.get('l10n_pe_district') and not variables.get('city_id') and variables.get('state_id') == company.partner_id.state_id.id:
                 variables['l10n_pe_district'] = self._search_district()
