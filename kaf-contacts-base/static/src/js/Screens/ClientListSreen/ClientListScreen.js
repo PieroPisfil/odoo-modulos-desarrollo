@@ -44,11 +44,20 @@ odoo.define('kaf-contacts-base.ClientListScreen', function(require) {
         _clickGuardar(){
             var self = this;
             let vat = $('#vat').val()
+            let tipo_doc = $('.l10n_latam_identification_type_id').val()
             if(!vat){
                 self.showPopup('ErrorTracebackPopup', {
                     'title': 'Nro. de documento vacío',
                     'body': 'Se necesita un Número de Documento, no debe estar vacío',
                 });
+                return;
+            }
+            if(!tipo_doc){
+                self.showPopup('ErrorTracebackPopup', {
+                    'title': 'Tpo. de documento vacío',
+                    'body': 'Se necesita un Tipo de Documento, no debe estar vacío',
+                });
+                return;
             }
             rpc.query({
                 model: 'res.partner',

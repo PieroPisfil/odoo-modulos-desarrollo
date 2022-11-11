@@ -10,8 +10,8 @@ _logger = logging.getLogger(__name__)
 
 QUERY_DOCUMENT ={
 'urls': {
-    'dni': ,
-    'ruc': ,
+    'dni': 'gjghj',
+    'ruc': 'fdgdfg',
 }
 }
 

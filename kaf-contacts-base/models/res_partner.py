@@ -391,8 +391,8 @@ class ResPartner(models.Model):
                 if res_partner:
                     msg3 = 'Error: Contacto ya existe'
                     raise ValidationError(msg3)
-            if not variables.get('l10n_latam_identification_type_id'):
-                raise ValidationError('Se necesita un Tipo de Documento, no debe estar vacío')
+            # if not variables.get('l10n_latam_identification_type_id'):
+            #     raise ValidationError('Se necesita un Tipo de Documento, no debe estar vacío')
             if variables.get('l10n_latam_identification_type_id') == 4 or variables.get('l10n_latam_identification_type_id') == 5:
                 vvat = variables.get('vat')
                 if not vvat.isnumeric():

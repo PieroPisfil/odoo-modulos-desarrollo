@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <odoo>
+ 
+    <record id="action_open_datasheet" model="ir.actions.act_window">
+        <field name="name">Hoja de datos</field>
+        <field name="res_model">datasheet</field>
+        <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <record id="action_open_copier_brand" model="ir.actions.act_window">
+        <field name="name">Marcas de Copiadoras</field>
+        <field name="res_model">copier.brand</field>
+        <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <record id="action_open_config_1" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'kaf-fotocopiadoras-datacopier', 'bin_size': False}</field>
+    </record>
+
+<!--  menu principal -->
+    <menuitem id="menu_principal" name="Fotocopiadoras" />
+    <!-- submenu1 -->
+    <menuitem id="menu_horizontal_1" name ="Mis Modelos" parent="menu_principal" />
+    <menuitem id="menu_vertical_datasheet" name="Hojas de Datos" parent="menu_horizontal_1" action="action_open_datasheet" />
+    <menuitem id="menu_vertical_copier_brand" name="Marcas de Foto." parent="menu_horizontal_1" action="action_open_copier_brand" />
+    <!-- submenu2 -->
+    <menuitem id="menu_horizontal_2" name="Settings" parent="menu_principal" />
+    <menuitem id="menu_vertical_config_1" name="Settings" parent="menu_horizontal_2" action="action_open_config_1" groups="base.group_system"/>
+</odoo>

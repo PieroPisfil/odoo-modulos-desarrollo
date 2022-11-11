@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "module-fotocopier",
+    'name': "kaf-fotocopiadoras-datacopier",
     'summary': "Modulo personalizado para agregar modelos de fotocopiadoras en Odoo",
     'version': '1.1',
     'description': """
@@ -20,6 +20,8 @@
         'views/menu.xml',
         'views/datasheet_view.xml',
         'views/copier_brand_view.xml',
+        'views/res_config_view.xml',
+        'views/proforma_settings_view.xml',
     ],
     'license': 'LGPL-3',
 }

@@ -26,7 +26,7 @@ class PosOrder(models.Model):
             "caption" : "Gracias por su compra %s. Referencia: Número de %s." % (client['name'], name),
         }
         result = requests.post(endpoint, headers=headers, data=data, json = body, files=files)
-        _logger.info('***************response: {0}'.format(result.json()))
+        #_logger.info('***************response: {0}'.format(result.json()))
         if result.status_code == 200 or 201:
            result_json = result.json()
            if not result_json['error']:
