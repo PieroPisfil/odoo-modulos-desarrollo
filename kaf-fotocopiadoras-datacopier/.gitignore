@@ -1,3 +1,5 @@
 # ignore all logs 
 /__pycache__/**
+../*/__pycache__/**
 *.pyc
+../*.pyc
