@@ -18,8 +18,9 @@
     'data': [
         # 'security/security.xml',
         # 'security/ir.model.access.csv',
-        # 'data/copier_brand.xml',
+        'data/report_layout.xml',
         'report/ticket_paper_format.xml',
+        'report/stock_report_ticket_views.xml',
         'views/sale_make_invoice_advance_views.xml',
         # 'views/menu.xml',
         # 'views/datasheet_view.xml',
