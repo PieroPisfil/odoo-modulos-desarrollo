@@ -28,110 +28,112 @@
                     <t t-set="company" t-value="res_company"/>
                 </t>
             </t>
-
-            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-                <div class="o_clean_header">
-                <div class="row">
-                    <div class="col-6">
-                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
-                    </div>
-                    <div class="col-5 offset-1" name="company_address">
-                        <ul class="list-unstyled">
-                            <strong><li t-if="company.name"><span t-field="company.name"/></li></strong>
-                            <li t-if="forced_vat or company.vat">
-                                <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                                <span t-if="forced_vat" t-esc="forced_vat"/>
-                                <span t-else="" t-field="company.vat"/>
-                            </li>
-                            <li t-if="company.phone">Tel: <span class="o_force_ltr" t-field="company.phone"/></li>
-                            <li t-if="company.email"><span t-field="company.email"/></li>
-                            <li t-if="company.website"><span t-field="company.website"/></li>
-                        </ul>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            <div t-attf-class="article o_report_layout_bold o_company_#{company.id}_layout {{  'o_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}" t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else ('/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else '') }});" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
-                <t t-call="web.address_layout"/>
-                <t t-out="0"/>
-            </div>
-
-            <div t-attf-class="footer o_clean_footer o_company_#{company.id}_layout">
-                <div class="row">
-                    <div class="col-4">
-                        <span t-field="company.report_footer"/>
-                    </div>
-                    <div class="col-4">
-                        <span t-if="company.company_details" t-field="company.company_details"/>
-                    </div>
-                    <div class="col-3">
-                        <h5 class="mt0 mb0" t-field="company.report_header"/>
-                    </div>
-                    <div class="col-1">
-                        <ul t-if="report_type == 'pdf'" class="list-inline pagenumber float-right text-center">
-                            <li class="list-inline-item"><strong><span class="page"/></strong></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
             
+            <div class="article"> 
+                <div t-attf-class="o_company_#{company.id}_layout">
+                    <table>
+                        <tr style="width:100%">
+                            <td style="text-align:center;width:40%;vertical-align: middle;">
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" t-attf-style="width:90%"/>
+                            </td>
+                            <td style="text-align:center;vertical-align: middle;">
+                                <div name="company_address" style="font-size: 0.8rem;text-align: center;">
+                                    <strong><div t-if="company.name"><span t-field="company.name"/></div></strong>
+                                    <div t-if="forced_vat or company.vat">
+                                        <t t-esc="company.country_id.vat_label or 'RUC'"/>:
+                                        <span t-if="forced_vat" t-esc="forced_vat"/>
+                                        <span t-else="" t-field="company.vat"/>
+                                    </div>
+                                    <div>
+                                        <span t-if="company.street"><t t-esc="company.street"/></span>
+                                        <span t-if="company.partner_id.l10n_pe_district" t-field="company.partner_id.l10n_pe_district"/>
+                                        <span t-if="company.city and (company.country_id != 'Perú')"><t t-esc="company.city"/></span>
+                                        <span t-if="company.partner_id.city_id" t-field="company.partner_id.city_id"/>
+                                        <span t-if="company.partner_id.state_id" t-field="company.partner_id.state_id"/>
+                                        <span t-if="company.partner_id.country_id" t-field="company.partner_id.country_id"/>
+                                    </div>                                    
+                                    <div t-if="company.phone">Mov: <span class="o_force_ltr" t-field="company.phone"/></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr style="width:100%;text-align:center;border:2px solid gray;border-radius:1px;margin-top:2.8px;margin-bottom:2.8px;"/>
+                </div>
+                
+                <div t-attf-class="o_report_layout_bold" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                    <!-- <t t-call="web.address_layout"/> -->
+                    <t t-out="0"/>
+                </div>
+
+                <div style="font-size: 0.8rem;text-align: center;">
+                    <hr style="width:100%;text-align:center;border:2px solid gray;border-radius:1px;margin-top:-10px;margin-bottom:-1px;"/>
+                    <div t-if="company.email"><span t-field="company.email"/></div>
+                    <div t-if="company.website"><span t-field="company.website"/></div>
+                </div>
+            </div>
         </template>
         
         <template id="report_picking_ticket">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="kaf-sales-base.ticket_layout_kaf">
-                        <div class="page">
-                            <div class="row justify-content-end mb16">
+                    <t t-set="lang" t-value="o.invoice_user_id.sudo().lang if o.move_type in ('in_invoice', 'in_refund') else o.partner_id.lang"/>
+                    <t t-call="kaf-sales-base.ticket_layout_kaf" t-lang="lang">
+                        <div class="page" style="font-size: 0.8rem;">
+                            <div class="row mb16">
                                 <div class="col-4" name="right_box">
                                     <div t-field="o.name" t-options="{'widget': 'barcode', 'width': 600, 'height': 100, 'img_style': 'width:300px;height:50px;'}"/>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6" name="div_outgoing_address">
                                     <div t-if="o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id">
-                                        <span><strong>Delivery Address:</strong></span>
+                                        <span><strong>Dirección de entrega:</strong></span>
                                         <div t-field="o.move_ids_without_package[0].partner_id"
                                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                                     </div>
                                     <div t-if="o.picking_type_id.code != 'internal' and (not o.move_ids_without_package or not o.move_ids_without_package[0].partner_id) and o.picking_type_id.warehouse_id.partner_id">
-                                        <span><strong>Warehouse Address:</strong></span>
+                                        <span><strong>Dirección del almacén:</strong></span>
                                         <div t-field="o.picking_type_id.warehouse_id.partner_id"
                                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                                     </div>
-                                </div>
-                                <div class="col-5 offset-1" name="div_incoming_address">
                                     <div t-if="o.picking_type_id.code=='incoming' and o.partner_id">
-                                        <span><strong>Vendor Address:</strong></span>
+                                        <span><strong>Dirección del proveedor:</strong></span>
                                     </div>
                                     <div t-if="o.picking_type_id.code=='internal' and o.partner_id">
-                                        <span><strong>Warehouse Address:</strong></span>
+                                        <span><strong>Dirección del almacén:</strong></span>
                                     </div>
                                     <div t-if="o.picking_type_id.code=='outgoing' and o.partner_id">
-                                        <span><strong>Customer Address:</strong></span>
+                                        <span><strong>Dirección del cliente:</strong></span>
                                     </div>
                                     <div t-if="o.partner_id" name="partner_header">
                                         <div t-field="o.partner_id"
                                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                                         <p t-if="o.sudo().partner_id.vat"><t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.sudo().partner_id.vat"/></p>
                                     </div>
-                                </div>
                             </div>
                             <br/>
-                            <h1 t-field="o.name" class="mt0 float-left"/>
+                            <h3 t-field="o.name" class="mt0 float-left"/>
                             <div class="row mt48 mb32">
                                 <div t-if="o.origin" class="col-auto" name="div_origin">
-                                    <strong>Order:</strong>
+                                    <strong>Orden:</strong>
                                     <p t-field="o.origin"/>
                                 </div>
                                 <div class="col-auto" name="div_state">
-                                    <strong>Status:</strong>
+                                    <strong>Estado:</strong>
                                     <p t-field="o.state"/>
                                 </div>
                                 <div class="col-auto" name="div_sched_date">
-                                    <strong>Scheduled Date:</strong>
+                                    <strong>Fecha prevista:</strong>
                                     <p t-field="o.scheduled_date"/>
+                                </div>
+                                <div t-if="o.picking_type_id.code == 'outgoing' and o.carrier_id" class="col-auto">
+                                    <strong>Carrier:</strong>
+                                    <p t-field="o.carrier_id"/>
+                                </div>
+                                <div t-if="o.weight" class="col-auto">
+                                    <strong>Weight:</strong>
+                                    <br/>
+                                    <span t-field="o.weight"/>
+                                    <span t-field="o.weight_uom_name"/>
                                 </div>
                             </div>
                             <table class="table table-sm" t-if="o.move_line_ids and o.move_ids_without_package">
@@ -140,22 +142,22 @@
                                 <thead>
                                     <tr>
                                         <th name="th_product">
-                                            <strong>Product</strong>
+                                            <strong>Producto</strong>
                                         </th>
                                         <th>
-                                            <strong>Quantity</strong>
+                                            <strong>Cantidad</strong>
                                         </th>
                                         <th name="th_from" t-if="o.picking_type_id.code != 'incoming'" align="left" groups="stock.group_stock_multi_locations">
-                                            <strong>From</strong>
+                                            <strong>De</strong>
                                         </th>
                                         <th name="th_to" t-if="o.picking_type_id.code != 'outgoing'" groups="stock.group_stock_multi_locations">
-                                            <strong>To</strong>
+                                            <strong>Para</strong>
                                         </th>
                                         <th name="th_serial_number" class="text-center" t-if="has_serial_number">
-                                           <strong>Lot/Serial Number</strong>
+                                           <strong>Lote/Serial Number</strong>
                                         </th>
                                         <th name="th_barcode" class="text-center" t-if="has_barcode">
-                                            <strong>Product Barcode</strong>
+                                            <strong>Barcode de producto</strong>
                                         </th>
                                     </tr>
                                 </thead>
