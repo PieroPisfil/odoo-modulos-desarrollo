@@ -96,7 +96,6 @@ class ResPartner(models.Model):
     def _on_change_country_id(self):
         if self.country_id and self.country_id.code != 'PE':
             self.l10n_pe_district = None
-            self.city = None
             self.city_id = None
 
     @api.model
