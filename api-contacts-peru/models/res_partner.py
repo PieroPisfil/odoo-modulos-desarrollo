@@ -15,6 +15,6 @@ QUERY_DOCUMENT ={
 }
 }
 
-class ResPArtner(model.Model):
+class ResPartner(model.Model):
     #Consulta DNI
     related_identification = fields.Char
