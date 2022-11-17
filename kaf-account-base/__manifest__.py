@@ -20,6 +20,7 @@
         # 'report/stock_report_ticket_views.xml',
         'views/account_journal_view.xml',
         'views/account_move_view.xml',
+        'views/res_company_view.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [

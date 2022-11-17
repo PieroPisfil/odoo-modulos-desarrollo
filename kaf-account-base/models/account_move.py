@@ -16,6 +16,7 @@ _logging = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:")
     ################# Para obtener el nombre del recibo, factura o boleta  ##########################
     def _compute_name(self):
         def journal_key(move):
@@ -113,6 +114,36 @@ class AccountMove(models.Model):
     ################# FIN  ##########################################################################
 
 ##############################################**********************************#####################################
+    
+    def _search_company(self):
+        if self.env.context.get('company_id'):
+            company = self.env['res.company'].browse(
+                self.env.context['company_id'])
+        else:
+            company = self.env.company
+        return company
+
+    def _json_empresa_envio(self):
+        company = self._search_company()
+        empresa_json = {
+            'empresa_id' : "1",
+            'empresa' : company.partner_id.name,
+            'nombre_comercial' : company.partner_id.commercial_name,
+            'ruc' : company.vat,
+            'domicilio_fiscal' : company.street,
+            'telefono_fijo' : company.phone or "",
+            'telefono_fijo2' : "",
+            'telefono_movil' : company.mobile or "",
+            'telefono_movil2' : "",
+            'foto' : "",
+            'correo' : company.email or "",
+            'ubigeo' : company.partner_id.zip,
+            'urbanizacion' : "-",
+            'usu_secundario_prueba_user' : company.usuario_prueba_cpe,
+        }
+        empresa_json = json.dumps(empresa_json)
+        return empresa_json
+
     def button_envio_sunat(self):
         if self.journal_id.is_cpe:
             tipo_vat = self.partner_id.l10n_latam_identification_type_id.name
@@ -134,11 +165,8 @@ class AccountMove(models.Model):
 
             json_envio = json.dumps(json_envio)
             _logging.info('**************************** Entró a envío: {0}'.format(json_envio))
+            _logging.info('**************************** Entró a empresa envio: {0}'.format(self._json_empresa_envio()))
         else:
             raise UserError(_(
                 "El diario seleccionado no permite el envío."
             ))
-        
-
-
-    
