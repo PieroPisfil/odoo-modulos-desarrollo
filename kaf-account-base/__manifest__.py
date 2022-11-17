@@ -19,6 +19,7 @@
         'data/pe_datas.xml',
         # 'report/stock_report_ticket_views.xml',
         'views/account_journal_view.xml',
+        'views/account_move_view.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [

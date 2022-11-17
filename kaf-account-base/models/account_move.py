@@ -1,7 +1,9 @@
 from odoo import api, fields, models, _
+# from odoo.exceptions import RedirectWarning, UserError, ValidationError, AccessError
 # import odoo.addons.decimal_precision as dp
 # from datetime import datetime
-# from collections import defaultdict
+from collections import defaultdict
+import json 
 # import re
 # from . import amount_to_text_es
 from odoo.exceptions import UserError, ValidationError
@@ -14,7 +16,7 @@ _logging = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-
+    ################# Para obtener el nombre del recibo, factura o boleta  ##########################
     def _compute_name(self):
         def journal_key(move):
             return (move.journal_id, move.journal_id.refund_sequence and move.move_type)
@@ -89,3 +91,54 @@ class AccountMove(models.Model):
             batch['records']._compute_split_sequence()
 
         self.filtered(lambda m: not m.name).name = '/'
+
+    def _post(self, soft=True):
+        for invoice_id in self:
+            if invoice_id.journal_id.usar_secuencia_propia:
+                sequence = invoice_id._get_sequence()
+                if not sequence:
+                    raise UserError('Defina una secuencia en su diario.')
+                if len(invoice_id.name.split("-")) < 2:
+                    invoice_id.name = sequence.with_context(
+                        ir_sequence_date=invoice_id.date).next_by_id()
+                    invoice_id.payment_reference = invoice_id.name
+            else:
+                invoice_id._compute_name()
+        return super(AccountMove, self)._post()
+
+    def _get_sequence(self):
+        self.ensure_one()
+        journal = self.journal_id
+        return journal.sequence_id
+    ################# FIN  ##########################################################################
+
+##############################################**********************************#####################################
+    def button_envio_sunat(self):
+        if self.journal_id.is_cpe:
+            tipo_vat = self.partner_id.l10n_latam_identification_type_id.name
+            fecha_emision = self.invoice_date
+            fecha_emision = '%s-%s-%s' % (fecha_emision.day, fecha_emision.month, fecha_emision.year)
+            # _logging.info('**************************** Entró a envío: {0}'.format(fecha_emision))
+            json_envio = {
+                'operacion' : "generar_comprobante",
+                'tipo_de_comprobante' : int(self.journal_id.pe_invoice_code),
+                'serie' : self.journal_id.code,
+                'numero' : int(self.name.split("-")[-1]) ,
+                'cliente_tipo_de_documento' : tipo_vat,
+                'cliente_numero_de_documento' : self.partner_id.vat,
+                'cliente_direccion' : self.partner_id.street,
+                'moneda' : self.currency_id.name,
+                'fecha_de_emision' : fecha_emision,
+            }
+            #json_envio['operacion'] = "generar_comprobante"
+
+            json_envio = json.dumps(json_envio)
+            _logging.info('**************************** Entró a envío: {0}'.format(json_envio))
+        else:
+            raise UserError(_(
+                "El diario seleccionado no permite el envío."
+            ))
+        
+
+
+    
