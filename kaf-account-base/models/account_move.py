@@ -17,7 +17,9 @@ _logging = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:")
+    stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:", default=False, copy=False)
+    json_api_envio = fields.Char(copy=False)
+    json_api_rspt = fields.Char(copy=False)
     ################# Para obtener el nombre del recibo, factura o boleta  #############################################
     def _compute_name(self):
         def journal_key(move):
@@ -188,7 +190,7 @@ class AccountMove(models.Model):
         venta_json = json.dumps(venta_json)
         return venta_json
 
-    def button_envio_sunat(self):
+    def button_generar_json(self):
         if self.journal_id.is_cpe:
             tipo_vat = self.partner_id.l10n_latam_identification_type_id.name
             fecha_emision = self.invoice_date
@@ -208,9 +210,20 @@ class AccountMove(models.Model):
             #json_envio['operacion'] = "generar_comprobante"
 
             json_envio = json.dumps(json_envio)
+            self.json_api_envio = json_envio
             _logging.info('**************************** Entró a envío: {0}'.format(json_envio))
             _logging.info('**************************** Entró a empresa envio: {0}'.format(self._json_empresa_envio()))
         else:
             raise UserError(_(
                 "El diario seleccionado no permite el envío."
             ))
+
+    def button_envio_sunat(self):
+        json_rspt = {
+            'error' : False,
+            'menssage' : 'Enviado'
+        }
+        json_rspt = json.dumps(json_rspt)
+        self.json_api_rspt = json_rspt
+        return json_rspt
+        #_logging.info('**************************** Entró a envío: entro a envio de json')
