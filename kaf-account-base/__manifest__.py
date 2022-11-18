@@ -17,10 +17,12 @@
         'security/pe_datas_security.xml',
         'security/ir.model.access.csv',
         'data/pe_datas.xml',
+        'data/tipo_comprobante_pe.xml',
         # 'report/stock_report_ticket_views.xml',
         'views/account_journal_view.xml',
         'views/account_move_view.xml',
         'views/res_company_view.xml',
+        'views/tipo_comprobante_view.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [

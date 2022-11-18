@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="view_tipo_comprobante_form" model="ir.ui.view">
+        <field name="name">Vista formulario de tipo de comprobante</field>
+        <field name="model">tipo.comprobante</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active','=',True)]}" />
+                    <div class="oe_title">
+                        <field name="name"/>
+                    </div>
+                    <group>
+                        <field name="active" invisible="1" />  
+                        <field name="code_api"/>
+                        <field name="es_nota_credito_debito"/>
+                        <field name="puede_tener_anticipo"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -17,7 +17,7 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:")
-    ################# Para obtener el nombre del recibo, factura o boleta  ##########################
+    ################# Para obtener el nombre del recibo, factura o boleta  #############################################
     def _compute_name(self):
         def journal_key(move):
             return (move.journal_id, move.journal_id.refund_sequence and move.move_type)
@@ -111,7 +111,7 @@ class AccountMove(models.Model):
         self.ensure_one()
         journal = self.journal_id
         return journal.sequence_id
-    ################# FIN  ##########################################################################
+    ################################################## FIN  ##########################################################################
 
 ##############################################**********************************#####################################
     
@@ -125,6 +125,7 @@ class AccountMove(models.Model):
 
     def _json_empresa_envio(self):
         company = self._search_company()
+        modo_envio = "1" if company.modo_envio_cpe == 'produccion' else "0"
         empresa_json = {
             'empresa_id' : "1",
             'empresa' : company.partner_id.name,
@@ -140,9 +141,24 @@ class AccountMove(models.Model):
             'ubigeo' : company.partner_id.zip,
             'urbanizacion' : "-",
             'usu_secundario_prueba_user' : company.usuario_prueba_cpe,
+            'usu_secundario_prueba_passoword' : company.password_prueba_cpe,
+            'usu_secundario_produccion_user' : company.usuario_produccion_cpe,
+            'usu_secundario_produccion_password' : company.password_produccion_cpe,
+
+            'modo': modo_envio,
+            'distrito' : company.partner_id.l10n_pe_district.name or "",
+            'provincia' : company.partner_id.city_id.name or "",
+            'departamento' : company.partner_id.state_id.name or "",
         }
         empresa_json = json.dumps(empresa_json)
         return empresa_json
+    
+    def _json_venta_envio(self):
+        venta_json = {
+            'UBLVersionID' : '2.1'
+        }
+        venta_json = json.dumps(venta_json)
+        return venta_json
 
     def button_envio_sunat(self):
         if self.journal_id.is_cpe:
