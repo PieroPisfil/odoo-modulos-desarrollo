@@ -20,7 +20,7 @@ class AccountMove(models.Model):
     stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:", default=False, copy=False)
     json_api_envio = fields.Char(copy=False)
     json_api_rspt = fields.Char(copy=False)
-    ################# Para obtener el nombre del recibo, factura o boleta  #############################################
+######################## Para obtener el nombre del recibo, factura o boleta  #############################################
     def _compute_name(self):
         def journal_key(move):
             return (move.journal_id, move.journal_id.refund_sequence and move.move_type)

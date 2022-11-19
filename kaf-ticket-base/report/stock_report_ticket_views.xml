@@ -17,7 +17,7 @@
                 </t>
             </t>
             
-            <div class="article"> 
+            <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"> 
                 <div t-attf-class="o_company_#{company.id}_layout">
                     <table>
                         <tr style="width:100%">

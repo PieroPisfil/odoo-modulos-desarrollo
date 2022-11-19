@@ -10,19 +10,20 @@
     'author': "Piero Pisfil",
     'depends': [
         'contacts',
-        'kaf-ticket-base',
+        'web',
         'stock',
         'sale',
         'kaf-contacts-base',
-        'web',
+        'kaf-ticket-base',
     ],
     'data': [
-        # 'security/security.xml',
-        # 'security/ir.model.access.csv',
+        'security/security.xml',
+        'security/ir.model.access.csv',
         # 'data/report_layout.xml',
         'report/paper_format.xml',
         'report/template_a4_proforma.xml',
-        # 'views/sale_make_invoice_advance_views.xml',
+        'views/proforma_settings_view.xml',
+        'views/res_config_view.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [

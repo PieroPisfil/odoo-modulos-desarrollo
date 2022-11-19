@@ -18,7 +18,7 @@
         <field name="name" >Usuario: Solo puede ver sus propios Hoja de datos.</field>
         <field name="category_id" ref="module_category_datasheet_son"/>
     </record>
-    <record id="group_datasheet_admin" model="res.groups" >
+    <record id="group_datasheet_admin" model="res.groups">
         <field name="name">Administrador</field>
         <field name="category_id" ref="module_category_datasheet_son"/>
         <field name="implied_ids" eval="[(4, ref('group_datasheet_usuario'))]"></field>

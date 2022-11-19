@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-    <record id="view_proforma_settings" model="ir.ui.view">
-        <field name="name">Vista formulario Proforma configuracion</field>
-        <field name="model">proforma.settings</field>
+    <record id="view_report_settings" model="ir.ui.view">
+        <field name="name">Vista formulario Reporte configuracion</field>
+        <field name="model">report.settings</field>
         <field name="arch" type="xml">
             <form>
                 <group>

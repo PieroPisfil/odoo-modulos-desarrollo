@@ -9,9 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[hasclass('settings')]" position="inside">
                     <div class="app_settings_block"
-                        data-string="Fotocopiadoras Datacopier"
-                        data-key="kaf_fotocopiadoras_datacopier"
-                        string="Fotocopiadoras Datacopier">
+                        data-string="Reportes"
+                        data-key="kaf_report_base_config"
+                        string="Reportes">
                         <h2>Imágenes para Proformas</h2>
                         <div class="row mt16 o_settings_container">
                             <div class="col-12 col-lg-6 o_setting_box">

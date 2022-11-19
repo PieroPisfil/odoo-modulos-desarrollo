@@ -19,11 +19,13 @@
         'security/ir.model.access.csv',
         'data/pe_datas.xml',
         'data/tipo_comprobante_pe.xml',
-        # 'report/stock_report_ticket_views.xml',
+        'report/report_factura_a4.xml',
+        'report/report_invoice_ticket.xml',
         'views/account_journal_view.xml',
         'views/account_move_view.xml',
         'views/res_company_view.xml',
         'views/tipo_comprobante_view.xml',
+        'views/account_report.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [

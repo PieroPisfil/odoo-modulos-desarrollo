@@ -20,8 +20,6 @@
         'views/menu.xml',
         'views/datasheet_view.xml',
         'views/copier_brand_view.xml',
-        'views/res_config_view.xml',
-        'views/proforma_settings_view.xml',
     ],
     'license': 'LGPL-3',
 }
