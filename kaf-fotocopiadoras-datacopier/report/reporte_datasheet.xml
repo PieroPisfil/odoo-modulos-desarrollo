@@ -6,6 +6,7 @@
         <field name="name">Datasheet!</field>
         <field name="model">datasheet</field>
         <field name="report_type">qweb-pdf</field> 
+        <field name="paperformat_id" ref="kaf-report-base.paperformat_proforma"/>
         <field name="report_name">kaf-fotocopiadoras-datacopier.report_datasheet</field>
         <field name="report_file">kaf-fotocopiadoras-datacopier.report_datasheet</field>
         <field name="print_report_name">('Datasheet - %s' %(object.name))</field>
@@ -17,6 +18,7 @@
         <field name="name">Proforma!</field>
         <field name="model">datasheet</field>
         <field name="report_type">qweb-pdf</field> 
+        <field name="paperformat_id" ref="kaf-report-base.paperformat_proforma"/>
         <field name="report_name">kaf-fotocopiadoras-datacopier.report_proforma</field>
         <field name="report_file">kaf-fotocopiadoras-datacopier.report_proforma</field>
         <field name="print_report_name">('Proforma - %s' %(object.name))</field>
@@ -27,40 +29,14 @@
     <template id="report_proforma">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-if="not o" t-set="o" t-value="doc"/>
-                <t t-if="not company">
-                    <!-- Multicompany -->
-                    <t t-if="company_id">
-                        <t t-set="company" t-value="company_id"/>
-                    </t>
-                    <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
-                        <t t-set="company" t-value="o.company_id.sudo()"/>
-                    </t>
-                    <t t-else="else">
-                        <t t-set="company" t-value="res_company"/>
-                    </t>
+                <t t-set="lang" t-value="o.env.lang"/>
+                <t t-call="kaf-report-base.kaf_a4_proforma_layout_1" t-lang="lang">
+                    <div><center><u><strong><h2>PROFORMA</h2></strong></u></center></div>                    
+                    
+                    <div class="col-3">
+                        <img t-attf-src="data:image/*;base64,{{o.image_1920}}" style="width: 300px"/>
+                    </div>
                 </t>
-            
-                <!-- t-lang="o.partner_id.lang" -->
-                <!-- <t t-call="solse_pe_cpe.cpe_body_print" t-lang="lang"/> -->
-
-                <div class="header" t-att-style="report_header_style">
-                    <img t-attf-src="data:image/*;base64,{{company.image_header_proforma}}" style="width: 100%"/>
-                </div>
-
-                <br/>
-                <br/>
-                <div class="title"><center><u><strong><h2>PROFORMA</h2></strong></u></center></div>
-                
-                
-                <div class="col-3">
-                    <img t-attf-src="data:image/*;base64,{{o.image_1920}}" style="width: 300px"/>
-                </div>
-
-
-                <div t-attf-style="position:absolute;bottom:0px;text-align: center;">
-                    <img t-attf-src="data:image/*;base64,{{company.image_footer_proforma}}" style="width: 100%"/>
-                </div>
             </t>
         </t>
     </template>

@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "kaf-account-base",
-    'summary': "Configuraciones iniciales para Facturación Perú",
+    'name': "kaf-report-base",
+    'summary': "Configuraciones para reportes personalizados.",
     'version': '1.1',
     'description': """
-       Configuraciones iniciales en el módulo de facturación par poder facturar con sunat.
+       Configuraciones para reportes personalizados.
     """,
     'author': "Piero Pisfil",
     'depends': [
+        'contacts',
         'kaf-ticket-base',
+        'stock',
+        'sale',
         'kaf-contacts-base',
-        'kaf-report-base',
-        'account',
+        'web',
     ],
     'data': [
-        'security/pe_datas_security.xml',
-        'security/ir.model.access.csv',
-        'data/pe_datas.xml',
-        'data/tipo_comprobante_pe.xml',
-        # 'report/stock_report_ticket_views.xml',
-        'views/account_journal_view.xml',
-        'views/account_move_view.xml',
-        'views/res_company_view.xml',
-        'views/tipo_comprobante_view.xml',
+        # 'security/security.xml',
+        # 'security/ir.model.access.csv',
+        # 'data/report_layout.xml',
+        'report/paper_format.xml',
+        'report/template_a4_proforma.xml',
+        # 'views/sale_make_invoice_advance_views.xml',
     ],
     # 'assets': {
     #     'point_of_sale.assets': [
