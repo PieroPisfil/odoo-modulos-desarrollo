@@ -16,9 +16,10 @@
             </xpath>
             <xpath expr="//notebook//page[@name='advanced_settings']" position="after">
                 <page name="pe_config" string="Configuracion Peruana">
-                    <group name="peruvian_settings" string="Configuracion Peruana">
+                    <group name="peruvian_settings" string="Configuracion Personalizada">
                         <group>
                             <field name="is_cpe" attrs="{'invisible':[('type','not in',['sale'])]}" />
+                            <field name="tipo_comprobante" attrs="{'invisible': [('is_cpe', '=', False),('type','not in',['sale', 'purchase'])]}"/>
                             <field name="is_synchronous" attrs="{'invisible': [('is_cpe', '=', False)]}"/>
                             <field name="is_synchronous_anull" attrs="{'invisible': [('is_cpe', '=', False)]}"/>
                             <field name="pe_invoice_code" attrs="{'invisible':[('type','not in',['sale', 'purchase'])]}" />

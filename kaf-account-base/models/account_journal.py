@@ -12,14 +12,15 @@ class AccountJournal(models.Model):
    
   _inherit = "account.journal"
 
-  is_cpe = fields.Boolean('Es un CPE',help="Es un Comprobante Peruano Electrónico?")
+  is_cpe = fields.Boolean('Habilitado para envío:',help="Está habilitado para envío electrónico?")
   is_synchronous = fields.Boolean("Es síncrono")
   is_synchronous_anull = fields.Boolean("Anulación síncrona", default=True)
   credit_note_id = fields.Many2one(comodel_name="account.journal", string="Nota de credito", 
     domain="[('type','in', ['sale', 'purchase']), ('pe_invoice_code', '=', '07')]")
   dedit_note_id = fields.Many2one(comodel_name="account.journal", string="Nota de debito", 
     domain="[('type','in', ['sale', 'purchase']), ('pe_invoice_code', '=', '08')]")
-  pe_invoice_code = fields.Selection(selection="_get_pe_invoice_code", string="Tipo de comprobante")
+  pe_invoice_code = fields.Selection(selection="_get_pe_invoice_code", string="Tipo de data")
+  tipo_comprobante = fields.Many2one(comodel_name="tipo.comprobante", string="Tipo de comprobante")
   #pe_payment_method = fields.Selection(selection="_get_pe_payment_method", string="Metodo de pago")
 
   usar_secuencia_propia = fields.Boolean('Secuencia personalizada', help="Usar una secuencia propia como se hacia en otras versiones, al marcar esta opción y emitir un comprobante con este diario ya no se podrá usar el correlativo por defecto de odoo14 para este diario")

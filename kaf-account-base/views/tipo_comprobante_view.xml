@@ -12,6 +12,7 @@
                         <field name="name"/>
                     </div>
                     <group>
+                        <field name="titulo_en_documento"/>
                         <field name="active" invisible="1" />  
                         <field name="code_api"/>
                         <field name="es_nota_credito_debito"/>
@@ -28,6 +29,7 @@
         <field name="arch" type="xml">
             <tree string="Document Type" decoration-muted="(not active)" create="0" edit="0">
                 <field name="name"/>
+                <field name="titulo_en_documento"/>
                 <field name="code_api"/>
                 <field name='es_nota_credito_debito'/>
                 <field name='puede_tener_anticipo'/>
