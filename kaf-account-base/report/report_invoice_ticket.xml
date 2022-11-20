@@ -46,15 +46,72 @@
                                     <t t-esc="o.partner_id.vat"/>
                                 </div>
                             </div>
+                            <div class="row" t-if="o.partner_id">
+                                <div class="col-5"> Direccion </div>:
+                                <div class="col-6">
+                                    <span t-if="o.partner_id.street"><t t-esc="o.partner_id.street"/></span>
+                                    <span t-if="o.partner_id.l10n_pe_district" t-field="o.partner_id.l10n_pe_district"/>
+                                    <span t-if="o.partner_id.city and (o.partner_id.country_id.name != 'Perú')"><t t-esc="o.partner_id.city"/></span>
+                                    <span t-if="o.partner_id.city_id" t-field="o.partner_id.city_id"/>
+                                    <span t-if="o.partner_id.state_id" t-field="o.partner_id.state_id"/>
+                                    <span t-if="o.partner_id.country_id" t-field="o.partner_id.country_id"/>
+                                    <span t-if="o.partner_id.zip" t-field="o.partner_id.zip"/>
+                                </div>
+                            </div>
                         </div>
 
                         <hr style="width:10%;text-align:left;margin-left:0"/>
                         <div class="clearfix" style="font-size: 12px;">
-                            <div class="row">
-                                <div class="col-5 text-right"></div>
-                                <div class="col-4 text-right"> <strong>OP. GRAVADAS:</strong></div>
-                                <div class="col-3 text-right"> <strong><span t-field="o.amount_untaxed"/> </strong></div>
-                            </div>
+                            <br/>
+                            <table style="width: 100%; font-size: 12px;">
+                                <t t-set="current_subtotal" t-value="0"/>
+                                <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+                                <thead>
+                                    <tr style="height: 9px;">
+                                        <th > CANT. </th>
+                                        <th > &amp;nbsp;&amp;nbsp; </th>
+                                        <th class="text-right"> UNIDAD </th>
+                                        <th > &amp;nbsp;&amp;nbsp; </th>
+                                        <th class="text-left"> DESCRIPCIÓN </th>
+                                        <th > &amp;nbsp;&amp;nbsp; </th>
+                                        <th class="text-right"> P.UNIT </th>
+                                        <th > &amp;nbsp;&amp;nbsp; </th>
+                                        <th class="text-right"> TOTAL </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="lines" t-as="line">
+                                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+
+                                        <tr t-if="o.partner_id">
+                                            <td class="text-center"><t t-esc="line.quantity"/></td>
+                                            <td > &amp;nbsp;&amp;nbsp; </td>
+                                            <td class="text-center">UNI</td>
+                                            <td > &amp;nbsp;&amp;nbsp; </td>
+                                            <td class="text-left"><span> <t t-esc="line.name"/> </span></td>
+                                            <td > &amp;nbsp;&amp;nbsp; </td>
+                                            <td class="text-center"><t t-esc="line.price_unit"/></td>
+                                            <td > &amp;nbsp;&amp;nbsp; </td>
+                                            <td class="text-center"><t t-esc="line.price_total"/></td>
+                                        </tr>
+
+                                        <tr t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')" >
+                                            <td>  </td>
+                                            <td> </td>
+                                            <td>  </td>
+                                            <td> </td>
+                                            <td> 
+                                                <strong class="mr16">Subtotal</strong>
+                                                <span
+                                                    t-esc="current_subtotal"
+                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'
+                                                />
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
                             
 <!--                             <t t-foreach="o.amount_by_group" t-as="amount_by_group">
                                 <tr style="">
@@ -76,11 +133,15 @@
                                     </t>
                                 </tr>
                             </t> -->
-
+                            <div class="row">
+                                <div class="col-2 text-right"></div>
+                                <div class="col-5 text-right"> <strong>OP. GRAVADAS:</strong></div>
+                                <div class="col-4 text-right"> <strong><span t-field="o.amount_untaxed"/> </strong></div>
+                            </div>
                             <div id="total" class="row">
-                                <div class="col-5 text-right"></div>
-                                <div class="col-4 text-right"> <strong>TOTAL A PAGAR:</strong></div>
-                                <div class="col-3 text-right"> <strong><span class="text-nowrap" t-field="o.amount_total"/> </strong></div>
+                                <div class="col-2 text-right"></div>
+                                <div class="col-5 text-right"> <strong>TOTAL A PAGAR:</strong></div>
+                                <div class="col-4 text-right"> <strong><span class="text-nowrap" t-field="o.amount_total"/> </strong></div>
                             </div>
                         </div>
                         <br/>
