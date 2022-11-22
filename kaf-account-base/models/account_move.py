@@ -17,6 +17,11 @@ _logging = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    forma_de_pago_pe = fields.Selection([
+        ('contado','CONTADO'),
+        ('credito','CRÉDITO')
+    ],string="Forma de Pago", default="contado", copy=False, required=True)
+
     stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:", default=False, copy=False)
     json_api_envio = fields.Char(copy=False)
     json_api_rspt = fields.Char(copy=False)
@@ -141,7 +146,7 @@ class AccountMove(models.Model):
         self.ensure_one()
         journal = self.journal_id
         return journal.sequence_id
-    ################################################## FIN  ##########################################################################
+################################################## FIN  ##########################################################################
 
 ##############################################**********************************#####################################
     

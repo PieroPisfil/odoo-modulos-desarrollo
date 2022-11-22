@@ -15,6 +15,7 @@
                         <field name="titulo_en_documento"/>
                         <field name="active" invisible="1" />  
                         <field name="code_api"/>
+                        <field name="es_cpe"/>
                         <field name="es_nota_credito_debito"/>
                         <field name="puede_tener_anticipo"/>
                     </group>
@@ -31,6 +32,7 @@
                 <field name="name"/>
                 <field name="titulo_en_documento"/>
                 <field name="code_api"/>
+                <field name="es_cpe"/>
                 <field name='es_nota_credito_debito'/>
                 <field name='puede_tener_anticipo'/>
                 <field name="active" widget="boolean_toggle"/>

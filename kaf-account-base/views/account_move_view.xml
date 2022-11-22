@@ -24,6 +24,9 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//group/div[@name='journal_div']" position="after">
+                <field name="forma_de_pago_pe" readonly="1"/>
+            </xpath>
         </field>
     </record>
 </odoo>
