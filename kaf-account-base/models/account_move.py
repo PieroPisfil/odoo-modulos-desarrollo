@@ -3,12 +3,21 @@ from odoo import api, fields, models, _
 # import odoo.addons.decimal_precision as dp
 # from datetime import datetime
 from collections import defaultdict
-import json 
+import json
+from . import amount_to_text_es
 from odoo.tools.misc import format_date
 # import re
 # from . import amount_to_text_es
 from odoo.exceptions import UserError, ValidationError
 # from odoo.tools.misc import format_date
+
+try:
+    import qrcode
+    qr_mod = True
+except:
+    qr_mod = False
+from base64 import encodebytes
+from io import StringIO, BytesIO
 
 
 import logging
@@ -25,6 +34,20 @@ class AccountMove(models.Model):
     stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:", default=False, copy=False)
     json_api_envio = fields.Char(copy=False)
     json_api_rspt = fields.Char(copy=False)
+
+    amount_text = fields.Char("Monto en letras", compute="_get_amount_text")
+
+    sunat_qr_code = fields.Binary('QR Code', compute='_compute_get_qr_code')
+
+################################# CONVERTIR MONTO EN SU EQUIVALENTE EN LETRAS #####################################################
+    @api.depends('amount_total')
+    def _get_amount_text(self):
+        for invoice in self:
+            # fraction_name = invoice.currency_id.currency_subunit_label or ""
+            amount_text = invoice.currency_id.amount_to_text(
+                invoice.amount_total)
+            invoice.amount_text = amount_text
+
 ######################## Para obtener el nombre del recibo, factura o boleta  #############################################
     def _compute_name(self):
         def journal_key(move):
@@ -232,3 +255,35 @@ class AccountMove(models.Model):
         self.json_api_rspt = json_rspt
         return json_rspt
         #_logging.info('**************************** Entró a envío: entro a envio de json')
+##############################################**********************************#####################################
+
+###############################################QR CODE#####################################################################
+    @api.depends('name', 'journal_id.tipo_comprobante.es_cpe', 'journal_id.pe_invoice_code', 'amount_tax', 'amount_total', 'invoice_date', 'partner_id.vat', 'partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code', 'company_id.partner_id.vat')
+    def _compute_get_qr_code(self):
+        for invoice in self:
+            if not all((invoice.name != '/', invoice.journal_id.tipo_comprobante.es_cpe, qr_mod)):
+                invoice.sunat_qr_code = ''
+            elif len(invoice.name.split('-')) > 1 and invoice.invoice_date:
+                res = [
+                    invoice.company_id.partner_id.vat or '-',
+                    invoice.journal_id.pe_invoice_code or '',
+                    invoice.name.split('-')[0] or '',
+                    invoice.name.split('-')[1] or '',
+                    str(invoice.amount_tax), str(invoice.amount_total),
+                    fields.Date.to_string(
+                        invoice.invoice_date), 
+                    invoice.partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code or '-',
+                    invoice.partner_id.vat or '-', '']
+
+                qr_string = '|'.join(res)
+                qr = qrcode.QRCode(version=1, error_correction=(
+                    qrcode.constants.ERROR_CORRECT_Q))
+                qr.add_data(qr_string)
+                qr.make(fit=True)
+                image = qr.make_image()
+                tmpf = BytesIO()
+                image.save(tmpf, 'png')
+                invoice.sunat_qr_code = encodebytes(tmpf.getvalue())
+            else:
+                invoice.sunat_qr_code = ''
+##################################################################$$$$$$$$$$$$$$$$$$$$$###########################

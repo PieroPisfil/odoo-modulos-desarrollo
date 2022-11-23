@@ -24,7 +24,7 @@
                             <div class="row" t-if="o.invoice_date">
                                 <div class="col-5"> Fecha de Emisión </div>:
                                 <div class="col-6">
-                                    <t t-esc="o.invoice_date"/>
+                                    <t t-esc="o.invoice_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
                                 </div>
                             </div>
                             <div class="row" t-if="o.forma_de_pago_pe">
@@ -71,7 +71,7 @@
 
                         <div class="clearfix" style="font-size: 12px;text-align:left;">
                             <br/>
-                            <table style="width: 100%;font-size:12px;">
+                            <table style="width:100%;font-size:12px;">
                                 <thead>
                                     <tr style="height: 9px;">
                                         <th class="text-center"> [CANT.][UNIDAD] </th>
@@ -154,45 +154,73 @@
                                         </tr>
                                     </t>
                                 </tbody>
-                            </table>                            
-<!--                             <t t-foreach="o.amount_by_group" t-as="amount_by_group">
-                                <tr style="">
-                                    <t t-if="len(o.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and o.amount_untaxed == amount_by_group[2]">
-                                        <div class="row">
-                                            <div class="col-5 text-right"></div>
-                                            <div class="col-4 text-right"> <strong><span class="text-nowrap" t-esc="amount_by_group[0]"/>:</strong></div>
-                                            <div class="col-3 text-right o_price_total"> <strong><span class="text-nowrap" t-esc="amount_by_group[3]" /> </strong></div>
+                            </table> 
+                            <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>                           
+                            <div t-if="o.journal_id.tipo_comprobante.es_cpe">
+                                <div class="row">
+                                    <div class="col-3 text-right"></div>
+                                    <div class="col-5 text-right"> <strong>OP. GRAVADAS:</strong></div>
+                                    <div class="col-4 text-right"> <strong><span t-field="o.amount_untaxed"/> </strong></div>
+                                </div>
+                                
+                                <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                                    <!--    <tr class="border-black o_subtotal">
+                                        <td><strong t-esc="subtotal['name']"/></td>
+
+                                        <td class="text-right">
+                                            <span
+                                                t-att-class="oe_subtotal_footer_separator"
+                                                t-esc="subtotal['formatted_amount']"
+                                            />
+                                        </td>
+                                    </tr> -->
+
+                                    <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                    <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                                        <div id="totaxes" class="row">
+                                            <t t-if="len(tax_totals['groups_by_subtotal'][subtotal_to_show]) > 1">
+                                                <div class="col-3 text-right"></div>
+                                                <div class="col-5 text-right">
+                                                    <span t-esc="amount_by_group['tax_group_name']"/>
+                                                    <span class="text-nowrap"> on
+                                                        <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
+                                                    </span>:
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="col-3 text-right"></div>
+                                                <div class="col-5 text-right">
+                                                    <span t-esc="amount_by_group['tax_group_name']"/>:
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    <span t-esc="amount_by_group['formatted_tax_group_amount']" />
+                                                </div>
+                                            </t>
                                         </div>
                                     </t>
-                                    <t t-else="">
-                                        <div class="row">
-                                            <div class="col-5 text-right"></div>
-                                            <div class="col-4 text-right"> <strong><span t-esc="amount_by_group[0]"/></strong></div>
-                                            <div class="col-3 text-right o_price_total"> <strong><span class="text-nowrap">
-                                                <t t-esc="amount_by_group[4]"/>
-                                            </span> </strong></div>
-                                        </div>
-                                    </t>
-                                </tr>
-                            </t> -->
-                            <div class="row">
-                                <div class="col-3 text-right"></div>
-                                <div class="col-5 text-right"> <strong>OP. GRAVADAS:</strong></div>
-                                <div class="col-4 text-right"> <strong><span t-field="o.amount_untaxed"/> </strong></div>
+                                </t>
                             </div>
-                            <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                            
                             <div id="total" class="row">
                                 <div class="col-3 text-right"></div>
                                 <div class="col-5 text-right"> <strong>TOTAL A PAGAR:</strong></div>
                                 <div class="col-4 text-right"> <strong><span t-esc="tax_totals['formatted_amount_total']"/></strong></div>
                             </div>
                         </div>
-                        <br/>
+                        <div style="width:100%;font-size:15px;">
+                            Son: <strong><span t-field="o.amount_text" /></strong>
+                        </div>
+                        <div class="col-xs-12" t-if="o.journal_id.tipo_comprobante.es_cpe" style="padding: 2mm;text-align:center;display:block">
+                            <img t-if="o.sunat_qr_code" t-att-src="'data:image/png;base64,%s' %to_text(o.sunat_qr_code)" class="img-responsive center-block" style="width: 40mm;  height: 40mm;" />
+                        </div>
 
                         <div class="col-4" style="text-align:center;" t-if="not o.journal_id.tipo_comprobante.es_cpe">
                             <div t-field="o.name" t-options="{'widget': 'barcode', 'width': 600, 'height': 100, 'img_style': 'width:300px;height:50px;'}"/>
+                            <br/>
                         </div>
-                        <br/>
                     </t>
                 </t>
             </t>
