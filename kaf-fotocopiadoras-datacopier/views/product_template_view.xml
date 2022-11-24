@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="product_template_form_view_personalizado" model="ir.ui.view">
+        <field name="name">product.template.product_kaf</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook/page" position="after">
+                <page name="personalizado" string="Personalizado">
+                    <group name="personalizado">
+                        <field name="tipo_producto_kaf" widget="radio"/>
+                        <field name="modelo_fotocopiadora_id" options="{'no_create':True, 'no_open':True}"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    </data>
+</odoo>

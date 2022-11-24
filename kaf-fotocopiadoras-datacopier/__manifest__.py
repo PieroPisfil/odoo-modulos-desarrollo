@@ -20,6 +20,7 @@
         'views/menu.xml',
         'views/datasheet_view.xml',
         'views/copier_brand_view.xml',
+        'views/product_template_view.xml',
     ],
     'license': 'LGPL-3',
 }
