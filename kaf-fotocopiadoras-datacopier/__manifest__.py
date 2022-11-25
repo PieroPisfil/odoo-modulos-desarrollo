@@ -9,6 +9,7 @@
     """,
     'author': "Piero Pisfil",
     'depends': [
+        'product',
         'stock',
         'mail',
     ],
@@ -21,6 +22,7 @@
         'views/datasheet_view.xml',
         'views/copier_brand_view.xml',
         'views/product_template_view.xml',
+        'views/archivo_venta_view.xml'
     ],
     'license': 'LGPL-3',
 }

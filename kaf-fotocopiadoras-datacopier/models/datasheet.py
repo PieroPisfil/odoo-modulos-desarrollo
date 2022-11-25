@@ -21,6 +21,7 @@ class Datasheet(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'image.mixin']
 
     name = fields.Char(string='Nombre de Modelo')
+    fotocopiers_ids=fields.One2many('product.template','modelo_fotocopiadora_id')
     copy_brand = fields.Many2one(
         comodel_name='copier.brand',
         string='Marca')

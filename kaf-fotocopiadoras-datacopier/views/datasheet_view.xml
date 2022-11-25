@@ -19,7 +19,7 @@
                 </div>
 
                 <sheet>
-<!--                <center>
+                    <!--  <center>
                         <h1 style="color: red; background-color: blue">
                             Título
                         </h1>
@@ -114,9 +114,6 @@
                     <field name="activity_ids" />
                     <field name="message_ids" />
                 </div>
-<!--            <script>
-                    console.log('hola');
-                </script> -->
             </form>
         </field>
     </record>
@@ -131,7 +128,7 @@
                 <field name="tipo_funcion"/>
                 <field name="tipo_color"/>
                 <field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
-                <field name="porcentaje" sum="importe_total"/>
+                <!-- <field name="porcentaje" sum="importe_total"/> -->
             </tree>
 
             <!-- decoration-bf: negrita -->
