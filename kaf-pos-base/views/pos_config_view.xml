@@ -21,7 +21,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <!-- <div class="o_setting_left_pane"></div> -->
+                        <div class="o_setting_right_pane">
+                            <label for="invoice_journal_ids" string="Diarios de venta" />
+                            <div class="text-muted">
+                                Diarios de venta Factura
+                            </div>
+                            <div class="content-group mt16">
+                                <field name="invoice_journal_factura_id" colspan="4" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
                 </div>     
+                
             </xpath>
         </field>
     </record>

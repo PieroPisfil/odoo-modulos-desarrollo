@@ -12,6 +12,7 @@
         'base',
         'contacts',
         'point_of_sale',
+        'kaf-account-base',
     ],
     'data': [
         'views/pos_config_view.xml',
