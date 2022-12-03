@@ -19,15 +19,15 @@
         # 'data/*',
     ],
     'assets': {
-        # 'point_of_sale.assets': [
-        #     'kaf-whatsapp-pos/static/src/js/*',
-        #     'kaf-whatsapp-pos/static/src/css/**/*',
-        #     'kaf-whatsapp-pos/static/src/js/Screens/**/*',
-        # ],
-        # 'web.assets_qweb': [
-        #     'kaf-whatsapp-pos/static/src/xml/**',
-        #     'kaf-whatsapp-pos/static/src/xml/Screens/**/*',
-        # ],
+        'point_of_sale.assets': [
+            'kaf-pos-base/static/js/*',
+            # 'kaf-pos-base/static/css/**/*',
+            'kaf-pos-base/static/js/Screens/**/*',
+        ],
+        'web.assets_qweb': [
+            'kaf-pos-base/static/xml/**',
+            'kaf-pos-base/static/xml/Screens/**/*',
+        ],
     },
     'license': 'LGPL-3',
     'installable': True,
