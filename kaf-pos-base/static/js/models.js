@@ -3,7 +3,7 @@ odoo.define('kaf-pos-base.models', function(require) {
   
     var models = require('point_of_sale.models');
     var OrderSuper = models.Order;
-    // var _posModelSuper = models.PosModel.prototype;
+    var _posModelSuper = models.PosModel.prototype;
 
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
@@ -59,16 +59,14 @@ odoo.define('kaf-pos-base.models', function(require) {
     //     },
     // }]);
 
-    // models.PosModel = models.PosModel.extend({
-    //     initialize: function (session, attributes) {
-    //         var contact_model = _.find(this.models,function(model){
-    //             return model.model === 'res.partner';
-    //         });
-    //         contact_model.fields.push('l10n_latam_identification_type_id');
-    //         contact_model.fields.push('city_id');
-    //         contact_model.fields.push('l10n_pe_district');
-    //         return _posModelSuper.initialize.call(this,session,attributes);
-    //     }
-    // });
+    models.PosModel = models.PosModel.extend({
+        initialize: function (session, attributes) {
+            this.forma_de_pago_pe = [
+                {'code': 'CONTADO', 'name':'CONTADO'},
+                {'code': 'CREDITO', 'name':'CRÉDITO'},
+                {'code': 'GARANTIA', 'name':'POR GARANTÍA'},]
+            return _posModelSuper.initialize.call(this,session,attributes);
+        }
+    });
 
 })

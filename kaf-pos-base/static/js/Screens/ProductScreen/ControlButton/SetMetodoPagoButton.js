@@ -23,43 +23,37 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
             return this.env.pos.get_order();
         }
         get currentMetodoPagoName() {
-            return this.currentOrder && this.currentOrder.fiscal_position
-                ? this.currentOrder.fiscal_position.display_name
+            return this.currentOrder ? this.currentOrder.forma_de_pago_pe.display_name
                 : this.env._t('Método de Pago');
         }
         async onClick() {
-            const currentFiscalPosition = this.currentOrder.fiscal_position;
-            const fiscalPosList = [
+            const currentFiscalPosition = this.currentOrder.forma_de_pago_pe;
+            const metodopagoPosList = [
                 {
                     id: -1,
                     label: this.env._t('None'),
                     isSelected: !currentFiscalPosition,
                 },
             ];
-            for (let fiscalPos of this.env.pos.fiscal_positions) {
-                fiscalPosList.push({
-                    id: fiscalPos.id,
-                    label: fiscalPos.name,
+            for (let metodopagoPos of this.env.pos.fiscal_positions) {
+                metodopagoPosList.push({
+                    id: metodopagoPos.id,
+                    label: metodopagoPos.name,
                     isSelected: currentFiscalPosition
-                        ? fiscalPos.id === currentFiscalPosition.id
+                        ? metodopagoPos.id === currentFiscalPosition.id
                         : false,
-                    item: fiscalPos,
+                    item: metodopagoPos,
                 });
             }
-            const { confirmed, payload: selectedFiscalPosition } = await this.showPopup(
+            const { confirmed, payload: selectedMetodoPago } = await this.showPopup(
                 'SelectionPopup',
                 {
-                    title: this.env._t('Select Fiscal Position'),
-                    list: fiscalPosList,
+                    title: this.env._t('Seleccionar Método de pago'),
+                    list: metodopagoPosList,
                 }
             );
             if (confirmed) {
-                this.currentOrder.fiscal_position = selectedFiscalPosition;
-                // IMPROVEMENT: The following is the old implementation and I believe
-                // there could be a better way of doing it.
-                for (let line of this.currentOrder.orderlines.models) {
-                    line.set_quantity(line.quantity);
-                }
+                this.currentOrder.forma_de_pago_pe = selectedMetodoPago;
                 this.currentOrder.trigger('change');
             }
         }
