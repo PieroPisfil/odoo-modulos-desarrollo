@@ -23,28 +23,34 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
             return this.env.pos.get_order();
         }
         get currentMetodoPagoName() {
-            return this.currentOrder ? this.currentOrder.forma_de_pago_pe.display_name
+            return this.currentOrder.forma_de_pago_pe ? this.currentOrder.forma_de_pago_pe.name
                 : this.env._t('Método de Pago');
         }
         async onClick() {
-            const currentFiscalPosition = this.currentOrder.forma_de_pago_pe;
+            const currentMetodoPago = this.currentOrder.forma_de_pago_pe;
             const metodopagoPosList = [
                 {
-                    id: -1,
-                    label: this.env._t('None'),
-                    isSelected: !currentFiscalPosition,
+                    id: this.currentOrder.forma_de_pago_pe_alt[0].id,
+                    label: this.currentOrder.forma_de_pago_pe_alt[0].name,
+                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[0].id === currentMetodoPago.id
+                    : false,
+                    item : this.currentOrder.forma_de_pago_pe_alt[0],
+                },
+                {
+                    id: this.currentOrder.forma_de_pago_pe_alt[1].id,
+                    label: this.currentOrder.forma_de_pago_pe_alt[1].name,
+                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[1].id === currentMetodoPago.id
+                    : false,
+                    item : this.currentOrder.forma_de_pago_pe_alt[1],
+                },
+                {
+                    id: this.currentOrder.forma_de_pago_pe_alt[2].id,
+                    label: this.currentOrder.forma_de_pago_pe_alt[2].name,
+                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[2].id === currentMetodoPago.id
+                    : false,
+                    item : this.currentOrder.forma_de_pago_pe_alt[2],
                 },
             ];
-            for (let metodopagoPos of this.env.pos.fiscal_positions) {
-                metodopagoPosList.push({
-                    id: metodopagoPos.id,
-                    label: metodopagoPos.name,
-                    isSelected: currentFiscalPosition
-                        ? metodopagoPos.id === currentFiscalPosition.id
-                        : false,
-                    item: metodopagoPos,
-                });
-            }
             const { confirmed, payload: selectedMetodoPago } = await this.showPopup(
                 'SelectionPopup',
                 {
@@ -53,7 +59,8 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
                 }
             );
             if (confirmed) {
-                this.currentOrder.forma_de_pago_pe = selectedMetodoPago;
+                console.log(selectedMetodoPago);
+                this.currentOrder.forma_de_pago_pe = this.currentOrder.forma_de_pago_pe_alt[selectedMetodoPago.id];
                 this.currentOrder.trigger('change');
             }
         }

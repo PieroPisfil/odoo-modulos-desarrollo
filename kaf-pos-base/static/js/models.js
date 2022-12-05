@@ -8,6 +8,11 @@ odoo.define('kaf-pos-base.models', function(require) {
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             var self = this;
+            this.forma_de_pago_pe_alt = [
+                {'id':0,'code': 'CONTADO', 'name':'CONTADO'},
+                {'id':1,'code': 'CREDITO', 'name':'CRÉDITO'},
+                {'id':2,'code': 'GARANTIA', 'name':'POR GARANTÍA'},]
+            this.forma_de_pago_pe = this.forma_de_pago_pe_alt[0]; 
             this.to_invoice_factura    = false;
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
@@ -59,14 +64,11 @@ odoo.define('kaf-pos-base.models', function(require) {
     //     },
     // }]);
 
-    models.PosModel = models.PosModel.extend({
-        initialize: function (session, attributes) {
-            this.forma_de_pago_pe = [
-                {'code': 'CONTADO', 'name':'CONTADO'},
-                {'code': 'CREDITO', 'name':'CRÉDITO'},
-                {'code': 'GARANTIA', 'name':'POR GARANTÍA'},]
-            return _posModelSuper.initialize.call(this,session,attributes);
-        }
-    });
+    // models.PosModel = models.PosModel.extend({
+    //     initialize: function (session, attributes) {
+
+    //         return _posModelSuper.initialize.call(this,session,attributes);
+    //     }
+    // });
 
 })
