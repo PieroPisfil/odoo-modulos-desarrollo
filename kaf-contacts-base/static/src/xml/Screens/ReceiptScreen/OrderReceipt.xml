@@ -62,8 +62,28 @@
                     <br />
                     <br />
 
+                    <!-- Datos de Documento -->
+                    <div style="font-size: 0.8rem">
+                        <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE DOCUMENTO:</h4>
+                        <hr/>
+                        
+                        <t t-if="receipt.date.localestring">
+                            <div>Fecha de Emisión: <t t-esc="receipt.date.localestring"/> </div>
+                        </t> 
+                        <t t-else="">
+                            <div>Fecha de Emisión: <t t-esc="receipt.date.validation_date" /></div>
+                        </t>                      
+                        <t t-if='receipt.currency'>
+                            <div>Forma de Pago: FSFFDFSDSFDFDSFD</div> 
+                        </t>
+                        <t t-if='receipt.currency'>
+                            <div>Moneda: <t t-esc="receipt.currency.currency_unit_label"/></div> 
+                        </t>
+                        <hr/>
+                    </div>
+
                     <!--Datos del cliente-->
-                    <div style="font-size: 0.8rem;">
+                    <div style="font-size: 0.8rem;margin-top: 1.3rem;">
                         <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE CLIENTE:</h4>
                         <hr/>
                         <t t-if="receipt.client">
@@ -71,17 +91,13 @@
                                 <t t-if="receipt.client.name">
                                     <span>Cliente: </span><t t-esc="receipt.client.name" />
                                 <br/>
-                                </t>                                
-                                <t t-if="receipt.client.phone">
-                                    <span>Teléfono: </span> <t t-esc="receipt.client.phone" />
-                                <br/>
-                                </t>                                
+                                </t>                               
                                 <t t-if="receipt.client.vat">
-                                    <span>RUC/DNI: </span> <t t-esc="receipt.client.vat" />
+                                    <span><t t-esc="receipt.client.l10n_latam_identification_type_id[1]"/>: </span> <t t-esc="receipt.client.vat" />
                                 <br/>
                                 </t>                                
                                 <t t-if="receipt.client.street">
-                                    <span>Street: </span><t t-esc="receipt.client.street"/>
+                                    <span>Dirección: </span><t t-esc="receipt.client.street"/>
                                 <br/>
                                 </t>
                             </div>
@@ -89,16 +105,6 @@
                         <hr/>
                     </div>
                     <br/>
-                    <!-- Datos de Documento -->
-                    <div style="font-size: 0.8rem;margin-top: -1.3rem;">
-                        <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE DOCUMENTO:</h4>
-                        <hr/>
-                        <t t-if='receipt.currency'>
-                                <div>Moneda: <t t-esc="receipt.currency.name"/></div>
-                                <br />
-                        </t>
-                        <hr/>
-                    </div>
 
                     <!-- Orderlines -->
 

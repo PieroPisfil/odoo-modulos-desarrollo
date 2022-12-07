@@ -29,29 +29,7 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
         async onClick() {
             var self = this;
             const currentMetodoPago = this.currentOrder.forma_de_pago_pe;
-            const metodopagoPosList = [
-/*                 {
-                    id: this.currentOrder.forma_de_pago_pe_alt[0].id,
-                    label: this.currentOrder.forma_de_pago_pe_alt[0].name,
-                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[0].id === currentMetodoPago.id
-                    : false,
-                    item : this.currentOrder.forma_de_pago_pe_alt[0],
-                },
-                {
-                    id: this.currentOrder.forma_de_pago_pe_alt[1].id,
-                    label: this.currentOrder.forma_de_pago_pe_alt[1].name,
-                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[1].id === currentMetodoPago.id
-                    : false,
-                    item : this.currentOrder.forma_de_pago_pe_alt[1],
-                },
-                {
-                    id: this.currentOrder.forma_de_pago_pe_alt[2].id,
-                    label: this.currentOrder.forma_de_pago_pe_alt[2].name,
-                    isSelected: currentMetodoPago ? this.currentOrder.forma_de_pago_pe_alt[2].id === currentMetodoPago.id
-                    : false,
-                    item : this.currentOrder.forma_de_pago_pe_alt[2],
-                }, */
-            ];
+            const metodopagoPosList = [];
             for (let element of this.currentOrder.forma_de_pago_pe_alt){
                 metodopagoPosList.push({
                     id: element.id,
@@ -69,8 +47,9 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
                 }
             );
             if (confirmed) {
-                //console.log(selectedMetodoPago);
+                let selectedMetodoPagoAnterior = this.currentOrder.forma_de_pago_pe
                 this.currentOrder.forma_de_pago_pe = selectedMetodoPago;
+
                 if(this.currentOrder.forma_de_pago_pe.code === 'GARANTIA'){
                     for (let line of this.currentOrder.orderlines.models) {
                         line.set_unit_price(0);
@@ -81,6 +60,19 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
                         line.set_unit_price(line.product.get_price(this.currentOrder.pricelist, line.get_quantity(), line.get_price_extra()));
                     }
                     //this.currentOrder.set_pricelist(this.currentOrder.pricelist;
+                }
+                //Removemos las líneas de pago seleccionadas antes de cambiar el método de pago
+                if(selectedMetodoPago != selectedMetodoPagoAnterior){
+                    console.log(this.currentOrder.paymentlines)
+                    var lines = this.currentOrder.paymentlines.models;
+                    var empty = [];
+                    for ( var i = 0; i < lines.length; i++) {
+                        empty.push(lines[i]);
+                    }
+                    for (var i = 0; i < empty.length; i++){
+                        this.currentOrder.remove_paymentline(empty[i]);
+                        //this.currentOrder.paymentlines.remove(this.currentOrder.paymentlines.models[i])
+                    }
                 }
 
                 this.currentOrder.trigger('change');

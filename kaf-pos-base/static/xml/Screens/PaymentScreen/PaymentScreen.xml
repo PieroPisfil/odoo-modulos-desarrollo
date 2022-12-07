@@ -24,6 +24,28 @@
                 <i class="fa fa-file-text-o" /> Factura Crédito
             </div>
         </xpath>
+        <xpath expr="//div[hasclass('paymentmethods-container')]" position="replace">
+            <div class="paymentmethods-container">
+                <PaymentScreenPaymentLines paymentLines="paymentLines" />
+                <div t-if="currentOrder.forma_de_pago_pe.code === 'CREDITO'" class="paymentmethods">
+                    <t t-foreach="payment_methods_from_config" t-as="paymentMethod"
+                        t-key="paymentMethod.id">
+                        <PaymentMethodButton paymentMethod="paymentMethod" />
+                    </t>
+                </div>
+                <div t-if="currentOrder.forma_de_pago_pe.code === 'CONTADO'" class="paymentmethods">
+                    <t t-foreach="payment_methods_from_config" t-as="paymentMethod"
+                        t-key="paymentMethod.id" t-if="!paymentMethod.split_transactions">
+                        <PaymentMethodButton paymentMethod="paymentMethod" />
+                    </t>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//section[hasclass('payment-numpad')]" position="replace">
+            <section class="payment-numpad" t-if="currentOrder.forma_de_pago_pe.code != 'GARANTIA'">
+                <PaymentScreenNumpad />
+            </section>
+        </xpath>
     </t>
 
 </templates>
