@@ -1,4 +1,4 @@
-odoo.define("kaf-contacts-base.pos_image_field", function (require) {
+odoo.define("kaf-pos-base.pos_image_field", function (require) {
     "use strict";
     const Registries = require('point_of_sale.Registries');
     const Chrome = require('point_of_sale.Chrome');

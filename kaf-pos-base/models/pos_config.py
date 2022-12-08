@@ -6,6 +6,8 @@ from odoo.exceptions import UserError
 
 class PosConfig(models.Model):
     _inherit = "pos.config"
+    
+    image = fields.Binary(string='Image')
 
     #invoice_journal_ids = fields.Many2many(comodel_name='account.journal', string='Diarios de venta', domain="[('type', 'in', ['sale'])]")
     invoice_journal_factura_id = fields.Many2one(string='Diario de factura Perú', comodel_name='account.journal', domain=lambda self: "[('type', 'in', ['sale']), ('tipo_comprobante','=',%s), ('pe_invoice_code','=','01')]" % self.env.ref('kaf-account-base.factura_1').id)

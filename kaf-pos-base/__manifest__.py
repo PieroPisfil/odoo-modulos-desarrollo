@@ -16,16 +16,17 @@
     ],
     'data': [
         'views/pos_config_view.xml',
+        'views/pos_order_view.xml',
         # 'data/*',
     ],
     'assets': {
         'point_of_sale.assets': [
-            'kaf-pos-base/static/js/*',
-            # 'kaf-pos-base/static/css/**/*',
+            'kaf-pos-base/static/js/**/*',
+            'kaf-pos-base/static/css/**/*',
             'kaf-pos-base/static/js/Screens/**/*',
         ],
         'web.assets_qweb': [
-            'kaf-pos-base/static/xml/**',
+            'kaf-pos-base/static/xml/**/*',
             'kaf-pos-base/static/xml/Screens/**/*',
         ],
     },

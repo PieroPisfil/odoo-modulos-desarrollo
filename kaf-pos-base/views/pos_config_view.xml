@@ -43,6 +43,10 @@
                     </div>
                 </div>               
             </xpath>
+            
+            <field name="name" position="before">
+                    <field name="image" widget='image' class="oe_avatar"/>
+            </field>
         </field>
     </record>
 </odoo>

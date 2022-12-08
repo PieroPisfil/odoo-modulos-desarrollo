@@ -64,6 +64,8 @@
 
                     <!-- Datos de Documento -->
                     <div style="font-size: 0.8rem">
+                        <hr/>
+                        <br/> 
                         <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE DOCUMENTO:</h4>
                         <hr/>
                         
@@ -83,7 +85,7 @@
                     </div>
 
                     <!--Datos del cliente-->
-                    <div style="font-size: 0.8rem;margin-top: 1.3rem;">
+                    <div style="font-size: 0.8rem;margin-top: 1.2rem;">
                         <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE CLIENTE:</h4>
                         <hr/>
                         <t t-if="receipt.client">
@@ -95,11 +97,16 @@
                                 <t t-if="receipt.client.vat">
                                     <span><t t-esc="receipt.client.l10n_latam_identification_type_id[1]"/>: </span> <t t-esc="receipt.client.vat" />
                                 <br/>
-                                </t>                                
-                                <t t-if="receipt.client.street">
-                                    <span>Dirección: </span><t t-esc="receipt.client.street"/>
-                                <br/>
-                                </t>
+                                </t>  
+                                <span>Dirección: </span>
+                                <t t-if="receipt.client.street"><t t-esc="receipt.client.street"/></t> <nbsp/>
+                                <t t-if="receipt.client.l10n_pe_district" t-esc="receipt.client.l10n_pe_district[1]"/> <nbsp/>
+                                <t t-if="receipt.client.city &amp;&amp; (receipt.client.country_id[1] != 'Perú')" t-esc="receipt.client.city"/> <nbsp/>
+                                <t t-if="receipt.client.city_id" t-esc="receipt.client.city_id[1]"/> <nbsp/>
+                                <t t-if="receipt.client.state_id" t-esc="receipt.client.state_id[1]"/> <nbsp/>
+                                <t t-if="receipt.client.country_id" t-esc="receipt.client.country_id[1]"/> <nbsp/>
+                                <t t-if="receipt.client.zip" t-esc="receipt.client.zip"/>
+                                <br/>  
                             </div>
                         </t>
                         <hr/>
