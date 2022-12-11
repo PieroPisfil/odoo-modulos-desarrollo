@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='fiscal_position_id']" position="after">
-			    	<field name="invoice_journal" required="1"/>
+			    	<field name="invoice_journal"/>
 			    </xpath>
 
             </field>
@@ -20,7 +20,7 @@
 	        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree" />
 	        <field name="arch" type="xml">
 	            <field name="name" position="after">
-	                <field name="number_doc_relacionado" />
+	                <field name="numero_doc_relacionado" />
 	            </field>
 	        </field>
 	    </record>
