@@ -52,5 +52,11 @@ class PosOrder(models.Model):
     numero_doc_relacionado = fields.Char(string='Doc. Relacionado', readonly=True, copy=False)
     invoice_sequence_number = fields.Integer(string='Secuencia de números de factura', readonly=True, copy=False)
     invoice_journal = fields.Many2one('account.journal', string='Diario de facturas de ventas',   states={'draft': [('readonly', False)]}, readonly=True, domain="[('type', 'in', ['sale'])]", copy=True)
-    #invoice_journal_name = 
+    invoice_journal_name = fields.Char(string='Nombre de diario', related='invoice_journal.tipo_comprobante.titulo_en_documento')
     date_invoice = fields.Date("Fecha de la factura")
+
+    def _export_for_ui(self, order):
+        res = super(PosOrder, self)._export_for_ui(order)
+        res['invoice_journal'] = order.invoice_journal.id
+        res['invoice_journal_name'] = order.invoice_journal_name
+        return res

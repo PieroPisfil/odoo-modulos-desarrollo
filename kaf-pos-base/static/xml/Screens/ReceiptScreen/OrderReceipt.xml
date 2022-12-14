@@ -59,16 +59,14 @@
                             </t>
                         </div>
                     </div>
-                    <br />
-                    <br />
-                    <div>
+                    <div style="text-align:center;font-size: 1rem;margin-top:-0.5rem;">
                         <t t-if="receipt.invoice.invoice_journal_name">
                             <h3><t t-esc="receipt.invoice.invoice_journal_name"/></h3>
                         </t>    
                     </div>
                     
                     <!-- Datos de Documento -->
-                    <div style="font-size: 0.8rem">
+                    <div style="font-size: 0.8rem;margin-top:-0.5rem;">
                         <hr/>
                         <br/> 
                         <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE DOCUMENTO:</h4>
