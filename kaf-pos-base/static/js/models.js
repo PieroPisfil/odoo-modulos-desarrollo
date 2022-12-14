@@ -11,9 +11,9 @@ odoo.define('kaf-pos-base.models', function(require) {
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             this.pos = options.pos;
-            this.journal_id_alt_factura = this.pos.config.invoice_journal_factura_id
-            this.journal_id_alt_boleta = this.pos.config.invoice_journal_boleta_id
-            this.journal_id_alt_recibo = this.pos.config.invoice_journal_recibo_venta_id
+            this.journal_id_alt_factura = this.pos.config.invoice_journal_factura_id || false
+            this.journal_id_alt_boleta = this.pos.config.invoice_journal_boleta_id || false
+            this.journal_id_alt_recibo = this.pos.config.invoice_journal_recibo_venta_id || false
             this.forma_de_pago_pe_alt = [
                 {'id':0,'code': 'CONTADO', 'name':'CONTADO'},
                 {'id':1,'code': 'CREDITO', 'name':'CRÉDITO'},
@@ -22,17 +22,26 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura    = false;
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
-            this.journal_id = false; 
+            this.journal_id = false;
             var res = OrderSuper.prototype.initialize.apply(this, arguments);
             return res;
         },
+
+        /**
+        * @param {object} json JSON representing one PoS order.
+        */
+        init_from_JSON: function(json) {
+            OrderSuper.prototype.init_from_JSON.apply(this, arguments);
+            this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
+        },
+
+
         set_to_invoice_factura: function(to_invoice) {
             this.assert_editable();
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
             this.to_invoice_factura = to_invoice;
-            this.journal_id = this.journal_id_alt_factura; 
-            console.log(this.journal_id)
+            this.journal_id = to_invoice ? this.journal_id_alt_factura : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_factura: function(){
@@ -43,8 +52,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura    = false;
             this.to_invoice_recibo     = false;
             this.to_invoice_boleta = to_invoice;
-            this.journal_id = this.journal_id_alt_boleta; 
-            console.log(this.journal_id)
+            this.journal_id = to_invoice ? this.journal_id_alt_boleta : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_boleta: function(){
@@ -55,8 +63,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura    = false;
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo = to_invoice;
-            this.journal_id = this.journal_id_alt_recibo; 
-            console.log(this.journal_id)
+            this.journal_id = to_invoice ? this.journal_id_alt_recibo : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_recibo: function(){
@@ -65,33 +72,23 @@ odoo.define('kaf-pos-base.models', function(require) {
         
         export_as_JSON: function () {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
-            // json['to_invoice_factura'] = this.to_invoice_factura;
-            // json['to_invoice_boleta'] = this.to_invoice_boleta;
-            // json['to_invoice_recibo'] = this.to_invoice_recibo;
-            json['journal_id'] = this.journal_id[0]
+            json['invoice_journal'] = this.journal_id[0]
+            json['invoice_journal_name'] = this.journal_id[1]
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
-            //json['pe_invoice_date']= this.pe_invoice_date;
             return json;
         },
+
+        export_for_printing: function(){
+            var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
+            res['invoice'] = {
+                invoice_journal_name: this.get_journal_name() || 'Ticket POS',
+            }
+            return res
+        },
+
+        get_journal_name: function(){
+            return this.invoice_journal
+        },
     });
-    // models.load_models([{
-    //     model: 'l10n_latam.identification.type',
-    //     fields: ["name"],
-    //     //domain: function(self){return [['country_id.code', '=', 'PE']]},
-    //     loaded: function(self, doc_types){
-    // /*         self.docu_by_id = {}
-    //         _.each(doc_types, function(doc) {
-    //         self.docu_by_id[doc.id] = doc.id
-    //         }); */
-    //         self.doc_types = doc_types;
-    //     },
-    // }]);
-
-    // models.PosModel = models.PosModel.extend({
-    //     initialize: function (session, attributes) {
-
-    //         return _posModelSuper.initialize.call(this,session,attributes);
-    //     }
-    // });
 
 })

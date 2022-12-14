@@ -29,9 +29,9 @@ class PosOrder(models.Model):
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
-        res['invoice_journal'] = ui_order.get('journal_id', False)
-        self.invoice_journal = self._get_journal(res['invoice_journal']) if res['invoice_journal'] else None
-        _logger.warning('////////******************************////////////// {0}'.format(self.invoice_journal))
+        res['invoice_journal'] = ui_order.get('invoice_journal', False)
+        # self.invoice_journal = self._get_journal(res['invoice_journal']) if res['invoice_journal'] else None
+        # _logger.warning('////////******************************////////////// {0}'.format(self.invoice_journal))
         reg_datetime = datetime.now(tz)
         fecha = reg_datetime.strftime("%Y-%m-%d")
         res['date_invoice'] = parse_date(ui_order.get('date_invoice', fecha)).strftime(DATE_FORMAT)
@@ -52,4 +52,5 @@ class PosOrder(models.Model):
     numero_doc_relacionado = fields.Char(string='Doc. Relacionado', readonly=True, copy=False)
     invoice_sequence_number = fields.Integer(string='Secuencia de números de factura', readonly=True, copy=False)
     invoice_journal = fields.Many2one('account.journal', string='Diario de facturas de ventas',   states={'draft': [('readonly', False)]}, readonly=True, domain="[('type', 'in', ['sale'])]", copy=True)
+    #invoice_journal_name = 
     date_invoice = fields.Date("Fecha de la factura")
