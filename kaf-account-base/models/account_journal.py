@@ -21,7 +21,7 @@ class AccountJournal(models.Model):
     domain="[('type','in', ['sale', 'purchase']), ('pe_invoice_code', '=', '08')]")
   pe_invoice_code = fields.Selection(selection="_get_pe_invoice_code", string="Tipo de data")
   tipo_comprobante = fields.Many2one(comodel_name="tipo.comprobante", string="Tipo de comprobante")
-  tipo_comprobante_nombre = fields.Char(related="tipo_comprobante.titulo_en_documento")
+  tipo_comprobante_nombre = fields.Char(related="tipo_comprobante.titulo_en_documento",store=True, readonly=False)
   #pe_payment_method = fields.Selection(selection="_get_pe_payment_method", string="Metodo de pago")
 
   usar_secuencia_propia = fields.Boolean('Secuencia personalizada', help="Usar una secuencia propia como se hacia en otras versiones, al marcar esta opción y emitir un comprobante con este diario ya no se podrá usar el correlativo por defecto de odoo14 para este diario")

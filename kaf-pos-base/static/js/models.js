@@ -3,25 +3,66 @@ odoo.define('kaf-pos-base.models', function(require) {
   
     var models = require('point_of_sale.models');
     var OrderSuper = models.Order;
-    var _posModelSuper = models.PosModel.prototype;
-    var config = require('web.config');
+    var PosModelSuper = models.PosModel;
+    var PosDB = require('point_of_sale.DB');
+    var PosDBSuper = PosDB;
 
-    models.load_models([{
-        model: 'account.journal',
-        fields: ["id","name","tipo_comprobante_nombre"],
-        domain: function(self){return [['type', 'in', ['sale']]]; },
-        loaded: function(self, accs){
-            self.accs = accs;
+    PosDB = PosDB.extend({
+        init: function (options) {
+            this.journal_by_id = {};
+            this.journal_by_nombre = {};
+            this.sequence_by_id = {};
+            this.journal_sequence_by_id = {};
+            //this.invoice_numbers=[];
+            return PosDBSuper.prototype.init.apply(this, arguments);
         },
-    }]);
+
+        add_journals: function (journals) {
+            if (!journals instanceof Array) {
+                journals = [journals];
+            }
+            console.log(journals.length)
+            for (var i = 0, len = journals.length; i < len; i++) {
+                this.journal_by_id[journals[i].id] = journals[i];
+                this.journal_by_nombre[journals[i].id] = journals[i].tipo_comprobante_nombre;
+                //this.journal_sequence_by_id[journals[i].id] = journals[i].sequence_id[0];
+            }
+        },
+        get_journal_id: function (journal_id) {
+            return this.journal_by_id[journal_id];
+        },
+        get_journal_nombre: function (journal_id) {
+            return this.journal_by_nombre[journal_id];
+        },
+
+    });
+    models.load_models(
+        [   
+            {
+                model: 'account.journal',
+                fields: ["id","name","tipo_comprobante_nombre"],
+                //domain: function(self){return [['type', '=', ['sale']],]; },
+                ids: function(self){ return [self.config.invoice_journal_factura_id[0], self.config.invoice_journal_boleta_id[0], self.config.invoice_journal_recibo_venta_id[0]]; },
+                loaded: function(self, journals){    
+                    self.journal_ids = journals;
+                    self.db.add_journals(journals);
+                },
+            }
+        ]   
+    );
 
     models.load_fields('pos.config', ['invoice_journal_factura_id', 'invoice_journal_boleta_id', 'invoice_journal_recibo_venta_id','envio_automatico_cpe']);
-
+    models.PosModel = models.PosModel.extend({
+        initialize: function (session, attributes) {
+            var res = PosModelSuper.prototype.initialize.apply(this, arguments);
+            this.db = new PosDB();
+            return res;
+        }
+    });
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             this.pos = options.pos;
             this.journal_id_alt_factura = this.pos.config.invoice_journal_factura_id || false
-            console.log(this.journal_id_alt_factura)
             this.journal_id_alt_boleta = this.pos.config.invoice_journal_boleta_id || false
             this.journal_id_alt_recibo = this.pos.config.invoice_journal_recibo_venta_id || false
             this.forma_de_pago_pe_alt = [
@@ -33,6 +74,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
             this.invoice_journal = false;
+            this.numero_doc_relacionado = false;
             var res = OrderSuper.prototype.initialize.apply(this, arguments);
             return res;
         },
@@ -43,6 +85,7 @@ odoo.define('kaf-pos-base.models', function(require) {
         init_from_JSON: function(json) {
             OrderSuper.prototype.init_from_JSON.apply(this, arguments);
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
+            this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -52,7 +95,6 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura = to_invoice;
             this.invoice_journal = to_invoice ? this.journal_id_alt_factura : false; 
             this.to_invoice = to_invoice;
-            this.invoice_journal_name = to_invoice ? this.invoice_journal[1] : false;
         },
         is_to_invoice_factura: function(){
             return this.to_invoice_factura;
@@ -64,7 +106,6 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_boleta = to_invoice;
             this.invoice_journal = to_invoice ? this.journal_id_alt_boleta : false; 
             this.to_invoice = to_invoice;
-            this.invoice_journal_name = to_invoice ? this.invoice_journal[1] : false;
         },
         is_to_invoice_boleta: function(){
             return this.to_invoice_boleta;
@@ -76,16 +117,15 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_recibo = to_invoice;
             this.invoice_journal = to_invoice ? this.journal_id_alt_recibo : false; 
             this.to_invoice = to_invoice;
-            this.invoice_journal_name = to_invoice ? this.invoice_journal[1] : false;
         },
         is_to_invoice_recibo: function(){
             return this.to_invoice_recibo;
         },
         
+        //Esta funcion tmbn sirve para guaradar en la base de datos en el modelo pos.order
         export_as_JSON: function () {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
-            json['invoice_journal'] = this.invoice_journal[0]
-            json['invoice_journal_name'] = this.invoice_journal[1]
+            json['invoice_journal'] = this.invoice_journal[0];
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
             return json;
         },
@@ -93,13 +133,24 @@ odoo.define('kaf-pos-base.models', function(require) {
         export_for_printing: function(){
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
-                invoice_journal_name: this.get_journal_name() || 'Ticket POS',
+                invoice_journal_name: this.get_journal_name(this.invoice_journal[0]) || 'Ticket POS',
+                numero_doc_relacionado: this.get_invoice_number() || 'NUMBER',
             }
             return res
         },
 
-        get_journal_name: function(){
-            return this.invoice_journal_name
+        get_journal_name: function(journal_id){
+            if (this.invoice_journal_name) {
+                return this.invoice_journal_name
+            }
+            if (!journal_id){
+                return false;
+            }
+            return this.pos.db.get_journal_nombre(journal_id);
+        },
+
+        get_invoice_number: function () {
+            return this.numero_doc_relacionado || false;
         },
     });
 

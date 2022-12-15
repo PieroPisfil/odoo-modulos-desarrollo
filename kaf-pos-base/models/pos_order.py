@@ -41,22 +41,19 @@ class PosOrder(models.Model):
         res = super(PosOrder, self)._prepare_invoice_vals()
         timezone = pytz.timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
         res['invoice_date'] = self.date_invoice or self.date_order.astimezone(timezone).date()
-        # if not res.get('name') and res.get('type') == 'out_refund':
-        #     res['name'] = '/'
-        # else:
-        #     res['name'] = self.number
         res['journal_id'] = (self.invoice_journal.id or self.session_id.config_id.invoice_journal_id.id)
         return res
     
-     
-    numero_doc_relacionado = fields.Char(string='Doc. Relacionado', readonly=True, copy=False)
     invoice_sequence_number = fields.Integer(string='Secuencia de números de factura', readonly=True, copy=False)
     invoice_journal = fields.Many2one('account.journal', string='Diario de facturas de ventas',   states={'draft': [('readonly', False)]}, readonly=True, domain="[('type', 'in', ['sale'])]", copy=True)
     invoice_journal_name = fields.Char(string='Nombre de diario', related='invoice_journal.tipo_comprobante.titulo_en_documento')
+    numero_doc_relacionado = fields.Char(string='Doc. Relacionado', related='account_move.name', readonly=True, copy=False)
     date_invoice = fields.Date("Fecha de la factura")
 
+    #Funcion para mostrar campos de la orden despues de emitirla 
     def _export_for_ui(self, order):
         res = super(PosOrder, self)._export_for_ui(order)
         res['invoice_journal'] = order.invoice_journal.id
         res['invoice_journal_name'] = order.invoice_journal_name
+        res['numero_doc_relacionado'] = order.numero_doc_relacionado
         return res

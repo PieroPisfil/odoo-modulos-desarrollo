@@ -60,9 +60,18 @@
                         </div>
                     </div>
                     <div style="text-align:center;font-size: 1rem;margin-top:-0.5rem;">
-                        <t t-if="receipt.invoice.invoice_journal_name">
-                            <h3><t t-esc="receipt.invoice.invoice_journal_name"/></h3>
-                        </t>    
+                        <h3>
+                            <t t-if="receipt.invoice.invoice_journal_name">
+                                <t t-esc="receipt.invoice.invoice_journal_name"/> 
+                            </t>
+                            <br/>
+                            <!-- <t t-if="receipt.invoice.numero_doc_relacionado">
+                                <t t-esc="receipt.invoice.numero_doc_relacionado"/>
+                            </t>  -->
+                            <t t-if="order.get_invoice_number()">
+                                <t t-esc="order.get_invoice_number()"/>
+                            </t> 
+                        </h3>
                     </div>
                     
                     <!-- Datos de Documento -->
