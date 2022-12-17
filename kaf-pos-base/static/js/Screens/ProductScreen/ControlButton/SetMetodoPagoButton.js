@@ -30,7 +30,7 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
             var self = this;
             const currentMetodoPago = this.currentOrder.forma_de_pago_pe;
             const metodopagoPosList = [];
-            for (let element of this.currentOrder.forma_de_pago_pe_alt){
+            for (let element of this.env.pos.db.forma_de_pago_pe_alt){
                 metodopagoPosList.push({
                     id: element.id,
                     label: element.name,
@@ -50,7 +50,7 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
                 let selectedMetodoPagoAnterior = this.currentOrder.forma_de_pago_pe
                 this.currentOrder.forma_de_pago_pe = selectedMetodoPago;
 
-                if(this.currentOrder.forma_de_pago_pe.code === 'GARANTIA'){
+                if(this.currentOrder.forma_de_pago_pe.code === 'garantia'){
                     for (let line of this.currentOrder.orderlines.models) {
                         line.set_unit_price(0);
                     }

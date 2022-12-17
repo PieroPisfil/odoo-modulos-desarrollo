@@ -26,6 +26,7 @@ class PosOrder(models.Model):
                 ('active', '=', True)
             ], limit=1).id
 
+    #esto sirve para generar la factura (independiente de generación de ticket)
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
@@ -35,6 +36,7 @@ class PosOrder(models.Model):
         reg_datetime = datetime.now(tz)
         fecha = reg_datetime.strftime("%Y-%m-%d")
         res['date_invoice'] = parse_date(ui_order.get('date_invoice', fecha)).strftime(DATE_FORMAT)
+        res['forma_de_pago_pe'] = ui_order.get('forma_de_pago_pe', False)
         return res
     	
     def _prepare_invoice_vals(self):
@@ -49,6 +51,7 @@ class PosOrder(models.Model):
     invoice_journal_name = fields.Char(string='Nombre de diario', related='invoice_journal.tipo_comprobante.titulo_en_documento')
     numero_doc_relacionado = fields.Char(string='Doc. Relacionado', related='account_move.name', readonly=True, copy=False)
     date_invoice = fields.Date("Fecha de la factura")
+    forma_de_pago_pe = fields.Char(string="Forma de pago")
 
     #Funcion para mostrar campos de la orden despues de emitirla 
     def _export_for_ui(self, order):
@@ -56,6 +59,7 @@ class PosOrder(models.Model):
         res['invoice_journal'] = order.invoice_journal.id
         res['invoice_journal_name'] = order.invoice_journal_name
         res['numero_doc_relacionado'] = order.numero_doc_relacionado
+        res['forma_de_pago_pe'] = order.forma_de_pago_pe
         return res
     
     # @api.model

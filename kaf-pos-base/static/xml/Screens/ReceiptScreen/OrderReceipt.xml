@@ -65,9 +65,6 @@
                                 <t t-esc="receipt.invoice.invoice_journal_name"/> 
                             </t>
                             <br/>
-                            <!-- <t t-if="receipt.invoice.numero_doc_relacionado">
-                                <t t-esc="receipt.invoice.numero_doc_relacionado"/>
-                            </t>  -->
                             <t t-if="order.get_invoice_number()">
                                 <t t-esc="order.get_invoice_number()"/>
                             </t>
@@ -77,9 +74,9 @@
                     <!-- Datos de Documento -->
                     <div style="font-size: 0.8rem;margin-top:-0.5rem;">
                         <hr/>
-                        <br/> 
+                        <!-- <br/> 
                         <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE DOCUMENTO:</h4>
-                        <hr/>
+                        <hr/> -->
                         
                         <t t-if="receipt.date.localestring">
                             <div>Fecha de Emisión: <t t-esc="receipt.date.localestring"/> </div>
@@ -87,19 +84,19 @@
                         <t t-else="">
                             <div>Fecha de Emisión: <t t-esc="receipt.date.validation_date" /></div>
                         </t>                      
-                        <t t-if='receipt.currency'>
-                            <div>Forma de Pago: FSFFDFSDSFDFDSFD</div> 
+                        <t t-if='receipt.forma_de_pago_pe'>
+                            <div>Forma de Pago: <t t-esc="receipt.forma_de_pago_pe.name" /></div> 
                         </t>
                         <t t-if='receipt.currency'>
                             <div>Moneda: <t t-esc="receipt.currency.currency_unit_label"/></div> 
                         </t>
-                        <hr/>
+                        <!-- <hr/> -->
                     </div>
 
                     <!--Datos del cliente-->
-                    <div style="font-size: 0.8rem;margin-top: 1.2rem;">
-                        <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE CLIENTE:</h4>
-                        <hr/>
+                    <div style="font-size: 0.8rem;margin-top: 0.1rem;">
+                        <!-- <h4 style="margin-top: -0.7rem;margin-bottom: initial;">DATOS DE CLIENTE:</h4>
+                        <hr/> -->
                         <t t-if="receipt.client">
                             <div class="pos-receipt-left-align">
                                 <t t-if="receipt.client.name">

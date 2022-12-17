@@ -28,7 +28,8 @@ class AccountMove(models.Model):
 
     forma_de_pago_pe = fields.Selection([
         ('contado','CONTADO'),
-        ('credito','CRÉDITO')
+        ('credito','CRÉDITO'),
+        ('garantia','POR GARANTÍA')
     ],string="Forma de Pago", default="contado", copy=False, required=True)
 
     stado_envio_sunat = fields.Boolean(string="Sunat aceptó el comprobante:", default=False, copy=False)

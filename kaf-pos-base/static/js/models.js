@@ -14,6 +14,10 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.journal_by_nombre = {};
             this.sequence_by_id = {};
             this.journal_sequence_by_id = {};
+            this.forma_de_pago_pe_alt = [
+                {'id':0,'code': 'contado', 'name':'CONTADO'},
+                {'id':1,'code': 'credito', 'name':'CRÉDITO'},
+                {'id':2,'code': 'garantia', 'name':'POR GARANTÍA'},]
             //this.invoice_numbers=[];
             return PosDBSuper.prototype.init.apply(this, arguments);
         },
@@ -63,14 +67,7 @@ odoo.define('kaf-pos-base.models', function(require) {
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             this.pos = options.pos;
-            this.journal_id_alt_factura = this.pos.config.invoice_journal_factura_id || false
-            this.journal_id_alt_boleta = this.pos.config.invoice_journal_boleta_id || false
-            this.journal_id_alt_recibo = this.pos.config.invoice_journal_recibo_venta_id || false
-            this.forma_de_pago_pe_alt = [
-                {'id':0,'code': 'CONTADO', 'name':'CONTADO'},
-                {'id':1,'code': 'CREDITO', 'name':'CRÉDITO'},
-                {'id':2,'code': 'GARANTIA', 'name':'POR GARANTÍA'},]
-            this.forma_de_pago_pe = this.forma_de_pago_pe_alt[0]; 
+            this.forma_de_pago_pe = this.pos.db.forma_de_pago_pe_alt[0];
             this.to_invoice_factura    = false;
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
@@ -83,10 +80,12 @@ odoo.define('kaf-pos-base.models', function(require) {
         /**
         * @param {object} json JSON representing one PoS order.
         */
+       //funcion que se llama cuando se va a reimprimir y otras cosas pos-emisión
         init_from_JSON: function(json) {
             OrderSuper.prototype.init_from_JSON.apply(this, arguments);
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
+            this.forma_de_pago_pe = this.pos.db.forma_de_pago_pe_alt[json.forma_de_pago_pe] ? json.forma_de_pago_pe : false;
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -94,7 +93,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo     = false;
             this.to_invoice_factura = to_invoice;
-            this.invoice_journal = to_invoice ? this.journal_id_alt_factura : false; 
+            this.invoice_journal = to_invoice ? this.pos.config.invoice_journal_factura_id  : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_factura: function(){
@@ -105,7 +104,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura    = false;
             this.to_invoice_recibo     = false;
             this.to_invoice_boleta = to_invoice;
-            this.invoice_journal = to_invoice ? this.journal_id_alt_boleta : false; 
+            this.invoice_journal = to_invoice ? this.pos.config.invoice_journal_boleta_id : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_boleta: function(){
@@ -116,7 +115,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_factura    = false;
             this.to_invoice_boleta     = false;
             this.to_invoice_recibo = to_invoice;
-            this.invoice_journal = to_invoice ? this.journal_id_alt_recibo : false; 
+            this.invoice_journal = to_invoice ? this.pos.config.invoice_journal_recibo_venta_id : false; 
             this.to_invoice = to_invoice;
         },
         is_to_invoice_recibo: function(){
@@ -124,20 +123,22 @@ odoo.define('kaf-pos-base.models', function(require) {
         },
         
         //Esta funcion tmbn sirve para guaradar en la base de datos en el modelo pos.order
+        //esto sirve para guardar datos en el modelo pos.order//////////////////
         export_as_JSON: function () {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
             json['invoice_journal'] = this.invoice_journal[0];
+            json['forma_de_pago_pe'] = this.forma_de_pago_pe;
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
             return json;
         },
 
+        //esto sirve para que se imprima la orden///////////////
         export_for_printing: function(){
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
                 invoice_journal_name: this.get_journal_name(this.invoice_journal[0]) || 'Ticket POS',
-                numero_doc_relacionado: this.get_invoice_number() || ' - ',
             }
-            //console.log(this.pos)
+            res['forma_de_pago_pe'] = this.forma_de_pago_pe;
             return res
         },
 
