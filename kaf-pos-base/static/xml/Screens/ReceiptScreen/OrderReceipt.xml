@@ -65,12 +65,12 @@
                                 <t t-esc="receipt.invoice.invoice_journal_name"/> 
                             </t>
                             <br/>
-                            <!-- <t t-if="receipt.invoice.numero_doc_relacionado">
+                            <t t-if="receipt.invoice.numero_doc_relacionado">
                                 <t t-esc="receipt.invoice.numero_doc_relacionado"/>
-                            </t>  -->
-                            <t t-if="order.get_invoice_number()">
-                                <t t-esc="order.get_invoice_number()"/>
                             </t> 
+                            <!-- <t t-if="order.get_invoice_number(order.name)">
+                                <t t-esc="order.get_invoice_number(order.name)"/>
+                            </t>  -->
                         </h3>
                     </div>
                     

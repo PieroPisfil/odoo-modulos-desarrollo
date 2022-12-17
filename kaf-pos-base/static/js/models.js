@@ -6,6 +6,7 @@ odoo.define('kaf-pos-base.models', function(require) {
     var PosModelSuper = models.PosModel;
     var PosDB = require('point_of_sale.DB');
     var PosDBSuper = PosDB;
+    const rpc = require('web.rpc');
 
     PosDB = PosDB.extend({
         init: function (options) {
@@ -21,7 +22,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             if (!journals instanceof Array) {
                 journals = [journals];
             }
-            console.log(journals.length)
+            //console.log(journals.length)
             for (var i = 0, len = journals.length; i < len; i++) {
                 this.journal_by_id[journals[i].id] = journals[i];
                 this.journal_by_nombre[journals[i].id] = journals[i].tipo_comprobante_nombre;
@@ -134,8 +135,9 @@ odoo.define('kaf-pos-base.models', function(require) {
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
                 invoice_journal_name: this.get_journal_name(this.invoice_journal[0]) || 'Ticket POS',
-                numero_doc_relacionado: this.get_invoice_number() || 'NUMBER',
+                numero_doc_relacionado: this.get_invoice_number() || ' - ',
             }
+            //console.log(this.pos)
             return res
         },
 
@@ -150,7 +152,10 @@ odoo.define('kaf-pos-base.models', function(require) {
         },
 
         get_invoice_number: function () {
-            return this.numero_doc_relacionado || false;
+            if (this.numero_doc_relacionado) {
+                return this.numero_doc_relacionado
+            }
+            return false
         },
     });
 

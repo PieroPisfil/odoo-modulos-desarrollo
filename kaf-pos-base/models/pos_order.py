@@ -57,3 +57,10 @@ class PosOrder(models.Model):
         res['invoice_journal_name'] = order.invoice_journal_name
         res['numero_doc_relacionado'] = order.numero_doc_relacionado
         return res
+    
+    # @api.model
+    # def get_invoice_number_kaf(self, name):
+    #     pos_order = self.search([('pos_reference', '=', name),], limit=1)
+    #     _logger.info('***************variables: {0}'.format(pos_order))
+    #     res = {'error': True, 'message': pos_order.numero_doc_relacionado, 'data': {}}
+    #     return res
