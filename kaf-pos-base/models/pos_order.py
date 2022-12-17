@@ -26,7 +26,7 @@ class PosOrder(models.Model):
                 ('active', '=', True)
             ], limit=1).id
 
-    #esto sirve para generar la factura (independiente de generación de ticket)
+    #esto sirve para guaradar al servidor (independiente de generación de ticket)
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
@@ -53,7 +53,7 @@ class PosOrder(models.Model):
     date_invoice = fields.Date("Fecha de la factura")
     forma_de_pago_pe = fields.Char(string="Forma de pago")
 
-    #Funcion para mostrar campos de la orden despues de emitirla 
+    #Funcion para poner en cache los campos de la orden despues de emitirla en la reimpresion
     def _export_for_ui(self, order):
         res = super(PosOrder, self)._export_for_ui(order)
         res['invoice_journal'] = order.invoice_journal.id

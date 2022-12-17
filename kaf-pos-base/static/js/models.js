@@ -85,7 +85,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             OrderSuper.prototype.init_from_JSON.apply(this, arguments);
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
-            this.forma_de_pago_pe = this.pos.db.forma_de_pago_pe_alt[json.forma_de_pago_pe] ? json.forma_de_pago_pe : false;
+            this.forma_de_pago_pe = json.forma_de_pago_pe ? json.forma_de_pago_pe : false;
         },
 
         set_to_invoice_factura: function(to_invoice) {
