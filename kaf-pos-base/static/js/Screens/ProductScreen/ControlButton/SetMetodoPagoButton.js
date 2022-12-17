@@ -63,7 +63,7 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
                 }
                 //Removemos las líneas de pago seleccionadas antes de cambiar el método de pago
                 if(selectedMetodoPago != selectedMetodoPagoAnterior){
-                    console.log(this.currentOrder.paymentlines)
+                    //console.log(this.currentOrder.paymentlines)
                     var lines = this.currentOrder.paymentlines.models;
                     var empty = [];
                     for ( var i = 0; i < lines.length; i++) {

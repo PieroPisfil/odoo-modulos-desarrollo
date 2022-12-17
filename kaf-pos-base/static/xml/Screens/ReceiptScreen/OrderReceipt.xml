@@ -85,7 +85,7 @@
                             <div>Fecha de Emisión: <t t-esc="receipt.date.validation_date" /></div>
                         </t>                      
                         <t t-if='receipt.forma_de_pago_pe'>
-                            <div>Forma de Pago: <t t-esc="receipt.forma_de_pago_pe.name" /></div> 
+                            <div>Forma de Pago: <t t-esc="receipt.forma_de_pago_pe.name || receipt.forma_de_pago_pe" /></div> 
                         </t>
                         <t t-if='receipt.currency'>
                             <div>Moneda: <t t-esc="receipt.currency.currency_unit_label"/></div> 

@@ -127,7 +127,8 @@ odoo.define('kaf-pos-base.models', function(require) {
         export_as_JSON: function () {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
             json['invoice_journal'] = this.invoice_journal[0];
-            json['forma_de_pago_pe'] = this.forma_de_pago_pe;
+            json['forma_de_pago_pe'] = this.forma_de_pago_pe.code;
+            console.log(this.forma_de_pago_pe.code)
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
             return json;
         },

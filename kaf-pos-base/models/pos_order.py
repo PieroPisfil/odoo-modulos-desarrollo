@@ -26,7 +26,7 @@ class PosOrder(models.Model):
                 ('active', '=', True)
             ], limit=1).id
 
-    #esto sirve para guaradar al servidor (independiente de generación de ticket)
+    #esto sirve para guaradar al servidor en el modelo pos.order (independiente de generación de ticket)
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
@@ -36,14 +36,18 @@ class PosOrder(models.Model):
         reg_datetime = datetime.now(tz)
         fecha = reg_datetime.strftime("%Y-%m-%d")
         res['date_invoice'] = parse_date(ui_order.get('date_invoice', fecha)).strftime(DATE_FORMAT)
-        res['forma_de_pago_pe'] = ui_order.get('forma_de_pago_pe', False)
+        f_pago = ui_order.get('forma_de_pago_pe', False)
+        _logger.warning('////////******************************////////////// {0}'.format(f_pago))
+        res['forma_de_pago_pe'] = f_pago
         return res
-    	
+
+    #esto sirve para guaradar al servidor la factura account.move
     def _prepare_invoice_vals(self):
         res = super(PosOrder, self)._prepare_invoice_vals()
         timezone = pytz.timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
         res['invoice_date'] = self.date_invoice or self.date_order.astimezone(timezone).date()
         res['journal_id'] = (self.invoice_journal.id or self.session_id.config_id.invoice_journal_id.id)
+        res['forma_de_pago_pe'] = self.forma_de_pago_pe or False
         return res
     
     invoice_sequence_number = fields.Integer(string='Secuencia de números de factura', readonly=True, copy=False)
