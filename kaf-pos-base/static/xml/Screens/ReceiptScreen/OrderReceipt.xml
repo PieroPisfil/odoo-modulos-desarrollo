@@ -124,7 +124,7 @@
 
                     <!-- Orderlines -->
 
-                    <div class="orderlines">
+                    <div class="orderlines" style="font-size: 0.9rem">
                         <t t-call="OrderLinesReceipt"/>
                     </div>
 
@@ -145,39 +145,23 @@
                     <!-- Total -->
                     <div class="pos-receipt-right-align">--------</div>
                     <br/>
-                    <div class="pos-receipt-amount">
-                        TOTAL
+                    <div class="pos-receipt-amount" style="font-size: 1.0rem">
+                        SUBTOTAL
                         <span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/>
                     </div>
                     <t t-if="receipt.total_rounded != receipt.total_with_tax">
-                        <div class="pos-receipt-amount">
-                        Rounding
-                        <span t-esc='env.pos.format_currency(receipt.rounding_applied)' class="pos-receipt-right-align"/>
+                        <div class="pos-receipt-amount" style="font-size: 1.0rem">
+                            Rounding
+                            <span t-esc='env.pos.format_currency(receipt.rounding_applied)' class="pos-receipt-right-align"/>
                         </div>
-                        <div class="pos-receipt-amount">
-                        To Pay
-                        <span t-esc='env.pos.format_currency(receipt.total_rounded)' class="pos-receipt-right-align"/>
-                    </div>
-                    </t>
-                    <br/><br/>
-
-                    <!-- Payment Lines -->
-
-                    <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
-                        <div>
-                            <t t-esc="line.name" />
-                            <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
-                        </div>
+<!--                         <div class="pos-receipt-amount" style="font-size: 1.0rem">
+                            To Pay
+                            <span t-esc='env.pos.format_currency(receipt.total_rounded)' class="pos-receipt-right-align"/>
+                        </div> -->
                     </t>
                     <br/>
 
-                    <div class="pos-receipt-amount receipt-change">
-                        CHANGE
-                        <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
-                    </div>
-                    <br/>
-
-                    <!-- Extra Payment Info -->
+                    <!-- Descuentos e Impuestos -->
 
                     <t t-if="receipt.total_discount">
                         <div>
@@ -187,16 +171,38 @@
                     </t>
                     <t t-if="isTaxIncluded">
                         <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
-                            <div>
+                            <div style="font-size: 0.9rem">
                                 <t t-esc="tax.name" />
                                 <span t-esc="env.pos.format_currency_no_symbol(tax.amount)" class="pos-receipt-right-align"/>
                             </div>
                         </t>
-                        <div>
+                        <!-- <div>
                             Total Taxes
                             <span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/>
+                        </div> -->
+                        <t t-if="receipt.total_rounded != receipt.total_with_tax">
+                            <div class="pos-receipt-amount" style="font-size: 1.0rem">
+                                Total a Pagar
+                                <span t-esc='env.pos.format_currency(receipt.total_rounded)' class="pos-receipt-right-align"/>
+                            </div>
+                        </t>
+                    </t>
+
+                    <!--Métodos de Pago y Vuelto -->
+                    <br/>
+                    <span>Métodos de Pago</span>
+                    <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
+                        <div style="font-size: 0.9rem"> 
+                            <t t-esc="line.name" />
+                            <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
                         </div>
                     </t>
+
+                    <div class="pos-receipt-amount receipt-change" style="font-size: 0.9rem">
+                        VUELTO
+                        <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
+                    </div>
+                    <br/>
 
                     <div class="before-footer" />
 
@@ -234,37 +240,6 @@
                         </t>
                     </div>
                 </div>
-<!--                                 <t t-if='imageUrl'>
-                                <img t-att-src="imageUrl" style="width:100%"/>
-                            </t>
-                            <t t-else=''>
-                                <img src='/web/binary/company_logo' style="width:100%"/>
-                            </t> 
-                    <t t-if="receipt.company.logo">
-                        <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
-                    </t>
-                </div>
-                <div>
-                <t t-if="props.order.pos.config.name">
-                        <div style="width:100%;text-align:right;"><t t-esc="props.order.pos.config.name"/></div>
-                </t>
-                </div>
-            </xpath>
-        </t> -->
-<!--         <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
-        <xpath expr="//div[hasclass('orderlines')]" position="before">
-            <t t-if="receipt.client">
-                <div class="pos-receipt-center-align">
-                    <div><t t-esc="receipt.client.name" /></div>
-                    <t t-if="receipt.client.phone">
-                        <div>
-                            <span>Phone: </span>
-                            <t t-esc="receipt.client.phone" />
-                        </div>
-                    </t>
-                    <br />
-                </div>
-            </t> -->
         </xpath>
     </t>
 
