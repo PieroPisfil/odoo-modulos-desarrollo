@@ -24,6 +24,7 @@ odoo.define('kaf-pos-base.ReceiptScreen', function (require) {
                 var response2 = await this.order_two()
                 //console.log(response2['numero_doc_relacionado'])
                 this.currentOrder.numero_doc_relacionado = response2['numero_doc_relacionado']
+                this.currentOrder.amount_text = response2['amount_text']
                 this.render();
             }
 

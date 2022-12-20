@@ -72,6 +72,8 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_recibo     = false;
             this.invoice_journal = false;
             this.numero_doc_relacionado = false;
+            this.amount_text = false;
+            this.sunat_qr_code = false;
             var res = OrderSuper.prototype.initialize.apply(this, arguments);
             return res;
         },
@@ -85,6 +87,8 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
             this.forma_de_pago_pe = this.get_forma_de_pago_pe(json.forma_de_pago_pe) ? this.get_forma_de_pago_pe(json.forma_de_pago_pe) : false;
+            this.amount_text = json.amount_text || false
+            /* this.sunat_qr_code = json.sunat_qr_code || false */
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -131,7 +135,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             return json;
         },
 
-        //esto sirve para que se imprima la orden///////////////
+        //esto sirve para que se imprima por primera vez o después la orden(solo poner campos para la generacion de la orden, no obtencion de campos de factura)///////////////
         export_for_printing: function(){
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
@@ -168,6 +172,20 @@ odoo.define('kaf-pos-base.models', function(require) {
                 })
             }
             return ffpp
+        },
+
+        get_amount_text: function () {
+            if (this.amount_text) {
+                return this.amount_text
+            }
+            return false
+        },
+
+        get_qr_code: function () {
+            if (this.sunat_qr_code) {
+                return this.sunat_qr_code
+            }
+            return false
         }
     });
 

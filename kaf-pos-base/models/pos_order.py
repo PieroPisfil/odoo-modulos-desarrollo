@@ -56,6 +56,8 @@ class PosOrder(models.Model):
     numero_doc_relacionado = fields.Char(string='Doc. Relacionado', related='account_move.name', readonly=True, copy=False)
     date_invoice = fields.Date("Fecha de la factura")
     forma_de_pago_pe = fields.Char(string="Forma de pago")
+    amount_text = fields.Char(related='account_move.amount_text', readonly=True, copy=False)
+    sunat_qr_code = fields.Binary(related="account_move.sunat_qr_code", readonly=True, copy=False)
 
     #Funcion para poner en cache los campos de la orden despues de emitirla en la reimpresion
     def _export_for_ui(self, order):
@@ -64,11 +66,7 @@ class PosOrder(models.Model):
         res['invoice_journal_name'] = order.invoice_journal_name
         res['numero_doc_relacionado'] = order.numero_doc_relacionado
         res['forma_de_pago_pe'] = order.forma_de_pago_pe
+        res['amount_text'] = order.amount_text
+        res['sunat_qr_code'] = order.sunat_qr_code
         return res
     
-    # @api.model
-    # def get_invoice_number_kaf(self, name):
-    #     pos_order = self.search([('pos_reference', '=', name),], limit=1)
-    #     _logger.info('***************variables: {0}'.format(pos_order))
-    #     res = {'error': True, 'message': pos_order.numero_doc_relacionado, 'data': {}}
-    #     return res
