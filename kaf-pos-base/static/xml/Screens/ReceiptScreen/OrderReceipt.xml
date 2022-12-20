@@ -126,20 +126,6 @@
                     <t t-call="OrderLinesReceiptPersonalizado"/>
                 </div>
 
-                <!-- Subtotal -->
-
-                <t t-if="!isTaxIncluded">
-                    <div class="pos-receipt-right-align">--------</div>
-                    <br/>
-                    <div>Subtotal<span t-esc="env.pos.format_currency(receipt.subtotal)" class="pos-receipt-right-align"/></div>
-                    <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
-                        <div class="responsive-price">
-                            <t t-esc="tax.name" />
-                            <span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
-                        </div>
-                    </t>
-                </t>
-
                 <!-- Total -->
                 <div class="pos-receipt-right-align">--------</div>
                 <br/>
@@ -170,7 +156,7 @@
 
                 <div>OP. GRAVADAS<span t-esc="env.pos.format_currency(receipt.total_without_tax)" class="pos-receipt-right-align"/></div>
                 
-                <t t-if="isTaxIncluded">
+                <!-- <t t-if="isTaxIncluded"> -->
                     <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
                         <div style="font-size: 0.9rem">
                             <t t-esc="tax.name" />
@@ -192,7 +178,7 @@
                             <span t-esc="order.get_amount_text() || ''" /> 
                         </div>
                     </t>
-                </t>
+                <!-- </t> -->
 
                 <!--Métodos de Pago y Vuelto -->
                 <br/>
@@ -271,8 +257,10 @@
                 <WrappedProductNameLines line="line" />
             </t>
             <t t-else="">
-                [<t t-esc="line.product_default_code" />]
-                <div t-esc="line.product_name_wrapped[0]" />
+                <div class="responsive-price">
+                    [<t t-esc="line.product_default_code" />]
+                    <div t-esc="line.product_name_wrapped[0]" />
+                </div>
                 <WrappedProductNameLines line="line" />
                 <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                     <div class="pos-receipt-left-padding">
