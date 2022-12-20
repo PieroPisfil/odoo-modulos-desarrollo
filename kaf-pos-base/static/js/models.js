@@ -3,6 +3,7 @@ odoo.define('kaf-pos-base.models', function(require) {
   
     var models = require('point_of_sale.models');
     var OrderSuper = models.Order;
+    var OrderlineSuper = models.Orderline;
     var PosModelSuper = models.PosModel;
     var PosDB = require('point_of_sale.DB');
     var PosDBSuper = PosDB;
@@ -63,6 +64,20 @@ odoo.define('kaf-pos-base.models', function(require) {
             return res;
         }
     });
+
+    models.Orderline = models.Orderline.extend({
+        initialize: function (attributes, options) {
+            var res = OrderlineSuper.prototype.initialize.apply(this, arguments);
+            return res;
+        },
+        export_for_printing: function(){
+            var res = OrderlineSuper.prototype.export_for_printing.apply(this, arguments);
+            res['product_default_code'] = this.get_product().default_code || 'code';
+            return res
+        },
+
+    })
+
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             this.pos = options.pos;
@@ -73,7 +88,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.invoice_journal = false;
             this.numero_doc_relacionado = false;
             this.amount_text = false;
-            this.sunat_qr_code = false;
+            this.sunat_qr_code_char = false;
             var res = OrderSuper.prototype.initialize.apply(this, arguments);
             return res;
         },
@@ -88,7 +103,7 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
             this.forma_de_pago_pe = this.get_forma_de_pago_pe(json.forma_de_pago_pe) ? this.get_forma_de_pago_pe(json.forma_de_pago_pe) : false;
             this.amount_text = json.amount_text || false
-            /* this.sunat_qr_code = json.sunat_qr_code || false */
+            this.sunat_qr_code_char = json.sunat_qr_code_char || false
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -182,10 +197,11 @@ odoo.define('kaf-pos-base.models', function(require) {
         },
 
         get_qr_code: function () {
-            if (this.sunat_qr_code) {
-                return this.sunat_qr_code
-            }
-            return false
+            var qr_string = this.sunat_qr_code_char;
+            var qrcodesingle = new QRCode(false, {width : 80, height : 80, correctLevel : QRCode.CorrectLevel.Q});
+            qrcodesingle.makeCode(qr_string);
+            let qrdibujo = qrcodesingle.getDrawing();
+            return qrdibujo._canvas_base64;
         }
     });
 

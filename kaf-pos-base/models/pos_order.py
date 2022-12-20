@@ -57,7 +57,7 @@ class PosOrder(models.Model):
     date_invoice = fields.Date("Fecha de la factura")
     forma_de_pago_pe = fields.Char(string="Forma de pago")
     amount_text = fields.Char(related='account_move.amount_text', readonly=True, copy=False)
-    sunat_qr_code = fields.Binary(related="account_move.sunat_qr_code", readonly=True, copy=False)
+    sunat_qr_code_char = fields.Char(related="account_move.sunat_qr_code_char", readonly=True, copy=False)
 
     #Funcion para poner en cache los campos de la orden despues de emitirla en la reimpresion
     def _export_for_ui(self, order):
@@ -67,6 +67,6 @@ class PosOrder(models.Model):
         res['numero_doc_relacionado'] = order.numero_doc_relacionado
         res['forma_de_pago_pe'] = order.forma_de_pago_pe
         res['amount_text'] = order.amount_text
-        res['sunat_qr_code'] = order.sunat_qr_code
+        res['sunat_qr_code_char'] = order.sunat_qr_code_char
         return res
     
