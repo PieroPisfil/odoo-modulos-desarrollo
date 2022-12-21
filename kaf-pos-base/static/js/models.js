@@ -72,7 +72,7 @@ odoo.define('kaf-pos-base.models', function(require) {
         },
         export_for_printing: function(){
             var res = OrderlineSuper.prototype.export_for_printing.apply(this, arguments);
-            res['product_default_code'] = this.get_product().default_code || 'code';
+            res['product_default_code'] = this.get_product().default_code || '-';
             return res
         },
 
