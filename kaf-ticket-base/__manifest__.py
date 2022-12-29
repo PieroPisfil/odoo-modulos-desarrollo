@@ -11,7 +11,6 @@
     'depends': [
         'base',
         'kaf-contacts-base',
-        #'web',
     ],
     'data': [
         # 'security/security.xml',
