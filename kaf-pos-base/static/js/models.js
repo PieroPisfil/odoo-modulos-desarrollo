@@ -85,7 +85,8 @@ odoo.define('kaf-pos-base.models', function(require) {
             OrderSuper.prototype.init_from_JSON.apply(this, arguments);
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
-            this.forma_de_pago_pe = json.forma_de_pago_pe ? json.forma_de_pago_pe : false;
+            console.log(json.forma_de_pago_pe)
+            //this.forma_de_pago_pe = json.forma_de_pago_pe['name'] ? json.forma_de_pago_pe : this.get_forma_de_pago_pe(json.forma_de_pago_pe);
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -128,18 +129,19 @@ odoo.define('kaf-pos-base.models', function(require) {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
             json['invoice_journal'] = this.invoice_journal[0];
             json['forma_de_pago_pe'] = this.forma_de_pago_pe.code;
-            console.log(this.forma_de_pago_pe.code)
+            //console.log(this.forma_de_pago_pe.code)
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
             return json;
         },
 
-        //esto sirve para que se imprima la orden///////////////
+        //esto sirve para que se imprima la orden en directo o pos-impresion
         export_for_printing: function(){
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
                 invoice_journal_name: this.get_journal_name(this.invoice_journal[0]) || 'Ticket POS',
             }
-            res['forma_de_pago_pe'] = this.forma_de_pago_pe;
+            //res['forma_de_pago_pe'] = this.get_name_forma_de_pago_pe();
+            res['forma_de_pago_pe'] = this.forma_de_pago_pe['name'] ? this.forma_de_pago_pe.name : this.forma_de_pago_pe;
             return res
         },
 
@@ -159,6 +161,15 @@ odoo.define('kaf-pos-base.models', function(require) {
             }
             return false
         },
+        get_forma_de_pago_pe: function(code){
+            var formas = this.pos.db.forma_de_pago_pe_alt;
+            formas.forEach(function(forma){
+                if (forma.code === code){
+                    return forma
+                }
+            });
+            return false;
+        }
     });
 
 })

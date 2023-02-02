@@ -24,7 +24,8 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
         }
         get currentMetodoPagoName() {
             return this.currentOrder.forma_de_pago_pe ? this.currentOrder.forma_de_pago_pe.name
-                : this.env._t('Método de Pago');
+            //return this.currentOrder.forma_de_pago_pe ? this.currentOrder.get_name_forma_de_pago_pe()
+            : this.env._t('Método de Pago');
         }
         async onClick() {
             var self = this;

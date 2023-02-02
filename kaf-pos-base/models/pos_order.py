@@ -27,6 +27,7 @@ class PosOrder(models.Model):
             ], limit=1).id
 
     #esto sirve para guaradar al servidor en el modelo pos.order (independiente de generación de ticket)
+    #export_as_JSON es antes de esto
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
