@@ -3,6 +3,7 @@ odoo.define('kaf-pos-base.models', function(require) {
   
     var models = require('point_of_sale.models');
     var OrderSuper = models.Order;
+    var OrderlineSuper = models.Orderline;
     var PosModelSuper = models.PosModel;
     var PosDB = require('point_of_sale.DB');
     var PosDBSuper = PosDB;
@@ -26,7 +27,6 @@ odoo.define('kaf-pos-base.models', function(require) {
             if (!journals instanceof Array) {
                 journals = [journals];
             }
-            //console.log(journals.length)
             for (var i = 0, len = journals.length; i < len; i++) {
                 this.journal_by_id[journals[i].id] = journals[i];
                 this.journal_by_nombre[journals[i].id] = journals[i].tipo_comprobante_nombre;
@@ -64,6 +64,20 @@ odoo.define('kaf-pos-base.models', function(require) {
             return res;
         }
     });
+
+    models.Orderline = models.Orderline.extend({
+        initialize: function (attributes, options) {
+            var res = OrderlineSuper.prototype.initialize.apply(this, arguments);
+            return res;
+        },
+        export_for_printing: function(){
+            var res = OrderlineSuper.prototype.export_for_printing.apply(this, arguments);
+            res['product_default_code'] = this.get_product().default_code || '-';
+            return res
+        },
+
+    })
+
     models.Order = models.Order.extend({
         initialize: function (attributes, options) {
             this.pos = options.pos;
@@ -73,6 +87,8 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.to_invoice_recibo     = false;
             this.invoice_journal = false;
             this.numero_doc_relacionado = false;
+            this.amount_text = false;
+            this.sunat_qr_code_char = false;
             var res = OrderSuper.prototype.initialize.apply(this, arguments);
             return res;
         },
@@ -85,8 +101,6 @@ odoo.define('kaf-pos-base.models', function(require) {
             OrderSuper.prototype.init_from_JSON.apply(this, arguments);
             this.invoice_journal_name = json.invoice_journal_name ? json.invoice_journal_name : false;
             this.numero_doc_relacionado = json.numero_doc_relacionado ? json.numero_doc_relacionado : false;
-            console.log(json.forma_de_pago_pe)
-            //this.forma_de_pago_pe = json.forma_de_pago_pe['name'] ? json.forma_de_pago_pe : this.get_forma_de_pago_pe(json.forma_de_pago_pe);
         },
 
         set_to_invoice_factura: function(to_invoice) {
@@ -129,12 +143,12 @@ odoo.define('kaf-pos-base.models', function(require) {
             var json = OrderSuper.prototype.export_as_JSON.apply(this, arguments);
             json['invoice_journal'] = this.invoice_journal[0];
             json['forma_de_pago_pe'] = this.forma_de_pago_pe.code;
-            //console.log(this.forma_de_pago_pe.code)
+            console.log(this.forma_de_pago_pe.code)
             json['date_invoice'] = moment(new Date().getTime()).format('YYYY/MM/DD');
             return json;
         },
 
-        //esto sirve para que se imprima la orden en directo o pos-impresion
+        //esto sirve para que se imprima la orden///////////////
         export_for_printing: function(){
             var res = OrderSuper.prototype.export_for_printing.apply(this, arguments);
             res['invoice'] = {
@@ -161,15 +175,6 @@ odoo.define('kaf-pos-base.models', function(require) {
             }
             return false
         },
-        get_forma_de_pago_pe: function(code){
-            var formas = this.pos.db.forma_de_pago_pe_alt;
-            formas.forEach(function(forma){
-                if (forma.code === code){
-                    return forma
-                }
-            });
-            return false;
-        }
     });
 
 })

@@ -38,7 +38,9 @@ class AccountMove(models.Model):
 
     amount_text = fields.Char("Monto en letras", compute="_get_amount_text")
 
+    sunat_qr_code_char = fields.Char('Char QR code',compute='_compute_qr_char')
     sunat_qr_code = fields.Binary('QR Code', compute='_compute_get_qr_code')
+    sunat_hash = fields.Char('Hash de Sunat')
 
 ################################# CONVERTIR MONTO EN SU EQUIVALENTE EN LETRAS #####################################################
     @api.depends('amount_total')
@@ -259,7 +261,7 @@ class AccountMove(models.Model):
 ##############################################**********************************#####################################
 
 ###############################################QR CODE#####################################################################
-    @api.depends('name', 'journal_id.tipo_comprobante.es_cpe', 'journal_id.pe_invoice_code', 'amount_tax', 'amount_total', 'invoice_date', 'partner_id.vat', 'partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code', 'company_id.partner_id.vat')
+    @api.depends('name', 'journal_id.tipo_comprobante.es_cpe', 'journal_id.pe_invoice_code', 'amount_tax', 'amount_total', 'invoice_date', 'partner_id.vat', 'partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code', 'company_id.partner_id.vat','sunat_hash')
     def _compute_get_qr_code(self):
         for invoice in self:
             if not all((invoice.name != '/', invoice.journal_id.tipo_comprobante.es_cpe, qr_mod)):
@@ -270,13 +272,15 @@ class AccountMove(models.Model):
                     invoice.journal_id.pe_invoice_code or '',
                     invoice.name.split('-')[0] or '',
                     invoice.name.split('-')[1] or '',
-                    str(invoice.amount_tax), str(invoice.amount_total),
-                    fields.Date.to_string(
-                        invoice.invoice_date), 
+                    str(invoice.amount_tax), 
+                    str(invoice.amount_total),
+                    fields.Date.to_string(invoice.invoice_date), 
                     invoice.partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code or '-',
-                    invoice.partner_id.vat or '-', '']
-
+                    invoice.partner_id.vat or '-',
+                    invoice.sunat_hash or '',
+                ]
                 qr_string = '|'.join(res)
+                _logging.info('**************************** QR SRING: {0}'.format(qr_string))
                 qr = qrcode.QRCode(version=1, error_correction=(
                     qrcode.constants.ERROR_CORRECT_Q))
                 qr.add_data(qr_string)
@@ -287,4 +291,27 @@ class AccountMove(models.Model):
                 invoice.sunat_qr_code = encodebytes(tmpf.getvalue())
             else:
                 invoice.sunat_qr_code = ''
+
+    @api.depends('name', 'journal_id.tipo_comprobante.es_cpe', 'journal_id.pe_invoice_code', 'amount_tax', 'amount_total', 'invoice_date', 'partner_id.vat', 'partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code', 'company_id.partner_id.vat','sunat_hash')
+    def _compute_qr_char(self):
+        for invoice in self:
+            invoice.sunat_qr_code_char = ''
+            if not all((invoice.name != '/', invoice.journal_id.tipo_comprobante.es_cpe, qr_mod)):
+                invoice.sunat_qr_code_char = ''
+            elif len(invoice.name.split('-')) > 1 and invoice.invoice_date:
+                res = [
+                    invoice.company_id.partner_id.vat or '-',
+                    invoice.journal_id.pe_invoice_code or '',
+                    invoice.name.split('-')[0] or '',
+                    invoice.name.split('-')[1] or '',
+                    str(invoice.amount_tax), 
+                    str(invoice.amount_total),
+                    fields.Date.to_string(invoice.invoice_date), 
+                    invoice.partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code or '-',
+                    invoice.partner_id.vat or '-',
+                    invoice.sunat_hash or '',
+                ]
+
+                invoice.sunat_qr_code_char = '|'.join(res)
+            return invoice.sunat_qr_code_char
 ##################################################################$$$$$$$$$$$$$$$$$$$$$###########################

@@ -22,6 +22,7 @@
     'assets': {
         'point_of_sale.assets': [
             'kaf-pos-base/static/js/**/*',
+            'kaf-pos-base/static/lib/**/*',
             'kaf-pos-base/static/css/**/*',
             'kaf-pos-base/static/js/Screens/**/*',
         ],
