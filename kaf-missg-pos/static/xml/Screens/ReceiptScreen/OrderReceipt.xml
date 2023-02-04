@@ -1,8 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="point_of_sale.template" xml:space="preserve">
 
-        <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
-            <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
+            
+            <t t-if="props.order.pos.config.pos_evento &amp;&amp; props.jsondatos">
+                <div class="pos-receipt">
+                    <!--Cabecera Header-->
+                    <div style="display: flex;align-items: center;justify-content: space-evenly;">
+                        <div style="width: 25%;display: inline-flex;
+                            justify-content: center;align-items: center;">
+                            <t t-if="receipt.company.logo">
+                                <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo" style="width: 100%;"/>
+                            </t>
+                            <t t-if="!receipt.company.logo">
+                                <h2 class="pos-receipt-center-align">
+                                    <t t-esc="receipt.company.name" />
+                                </h2>
+                            </t>
+                        </div>
+                    </div>
+                    <br/>
+                    <div style="display: flex;justify-content: space-evenly;align-items: center;margin-top: -0.6rem;">
+                        <div style="text-align:center;font-size: 0.7rem;margin-top:-0.2rem;">
+                            <div>
+                                <t t-if="receipt.invoice.invoice_journal_name">
+                                    <t t-esc="receipt.invoice.invoice_journal_name"/> 
+                                </t>
+                                <t t-if="order.get_invoice_number()">
+                                    | <t t-esc="order.get_invoice_number()"/>
+                                </t>
+                            </div>
+                            | <t t-esc="receipt.name" />
+                            <div>
+                                <t t-if="receipt.date.localestring">
+                                    | <t t-esc="receipt.date.localestring" />
+                                </t>
+                                <t t-else="">
+                                    | <t t-esc="receipt.date.validation_date" />
+                                </t>
+                            </div>
+                        </div>
+                        <!-- QR O CODE BAR -->
+                        <t t-if="order.get_qr_code()">
+                            <div class="qr-code" id="qr-code" style="display: flex; justify-content: center;">
+                                <img alt="Scan me!" style="display: block;" t-att-src='order.get_qr_code()' />
+                            </div>
+                        </t>
+                    </div>
+                    <br/>
+                    <div style="text-align:center;font-size: 1.2rem;margin-top:-0.6rem;margin-bottom: -0.6rem;">
+                        <t t-if="props.jsondatos">
+                            *** <b><t t-esc="props.jsondatos[1]" /></b>: S/.<t t-esc="props.jsondatos[2]" /> ***
+                        </t> 
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
                 <div class="pos-receipt">
                     <!--Cabecera Header-->
                     <div style="display: inline-flex;justify-content: space-evenly;align-items: center;">
@@ -234,38 +288,9 @@
                         </t>
                     </div>
                 </div>
-<!--                                 <t t-if='imageUrl'>
-                                <img t-att-src="imageUrl" style="width:100%"/>
-                            </t>
-                            <t t-else=''>
-                                <img src='/web/binary/company_logo' style="width:100%"/>
-                            </t> 
-                    <t t-if="receipt.company.logo">
-                        <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
-                    </t>
-                </div>
-                <div>
-                <t t-if="props.order.pos.config.name">
-                        <div style="width:100%;text-align:right;"><t t-esc="props.order.pos.config.name"/></div>
-                </t>
-                </div>
-            </xpath>
-        </t> -->
-<!--         <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
-        <xpath expr="//div[hasclass('orderlines')]" position="before">
-            <t t-if="receipt.client">
-                <div class="pos-receipt-center-align">
-                    <div><t t-esc="receipt.client.name" /></div>
-                    <t t-if="receipt.client.phone">
-                        <div>
-                            <span>Phone: </span>
-                            <t t-esc="receipt.client.phone" />
-                        </div>
-                    </t>
-                    <br />
-                </div>
-            </t> -->
+            </t>
         </xpath>
+        
     </t>
 
 </templates>

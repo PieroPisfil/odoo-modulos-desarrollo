@@ -7,8 +7,11 @@
             </button>
         </xpath>
         <xpath expr="//div[hasclass('pos-receipt-container')]" position="replace">
+            <t t-set="_jsonDatos" t-value="jsonDatos"/>
             <div class="pos-receipt-container">
-                <OrderReceipt order="currentOrder" t-ref="order-receipt" />
+                <t t-foreach="_jsonDatos" t-as="orderlinejson" t-key="orderlinejson[0]">
+                    <OrderReceipt order="currentOrder" t-ref="order-receipt" jsondatos="orderlinejson"/>
+                </t>
             </div>
         </xpath>
     </t>

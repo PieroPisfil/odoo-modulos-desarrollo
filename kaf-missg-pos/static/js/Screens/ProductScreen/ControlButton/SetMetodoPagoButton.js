@@ -31,7 +31,14 @@ odoo.define('kaf-pos-base.SetMetodoPagoButton', function(require) {
             var self = this;
             const currentMetodoPago = this.currentOrder.forma_de_pago_pe;
             const metodopagoPosList = [];
-            for (let element of this.env.pos.db.forma_de_pago_pe_alt){
+            let lista_metodos_pago = [];
+            if (this.env.pos.config.pos_evento){
+                lista_metodos_pago = this.env.pos.db.forma_de_pago_pe_pos_evento
+            }
+            else{
+                lista_metodos_pago = this.env.pos.db.forma_de_pago_pe_alt
+            }
+            for (let element of lista_metodos_pago){
                 metodopagoPosList.push({
                     id: element.id,
                     label: element.name,

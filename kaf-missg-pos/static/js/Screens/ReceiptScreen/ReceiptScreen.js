@@ -18,6 +18,22 @@ odoo.define('kaf-pos-base.ReceiptScreen', function (require) {
                 super.mounted();
             }
 
+            get jsonDatos(){
+                var data_order = this.currentOrder.orderlines.models;
+                var json_datos = []
+                var index = 0 
+                //for (var j=0;j){}
+                for (var i=0;i<data_order.length;i++){
+                    for (var j=0;j<data_order[i].quantity;j++){
+                        json_datos[index]=[index,data_order[i].product.display_name,data_order[i].product.lst_price]
+                        index++;
+                    }
+                }
+                console.log(json_datos) 
+
+                return json_datos;
+            }
+
             async buttonImg() {
                 var ordder = this.currentOrder
                 this.id_order = ordder.pos.validated_orders_name_server_id_map[ordder.name]

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "kaf-pos-base",
+    'name': "kaf-missg-pos",
     'summary': "Configuraciones iniciales par el POS.",
     'version': '1.1',
     'description': """
@@ -21,13 +21,14 @@
     ],
     'assets': {
         'point_of_sale.assets': [
-            'kaf-pos-base/static/js/**/*',
-            'kaf-pos-base/static/css/**/*',
-            'kaf-pos-base/static/js/Screens/**/*',
+            'kaf-missg-pos/static/js/**/*',
+            'kaf-missg-pos/static/css/**/*',
+            'kaf-missg-pos/static/js/Screens/**/*',
+            'kaf-missg-pos/static/lib/**/*',
         ],
         'web.assets_qweb': [
-            'kaf-pos-base/static/xml/**/*',
-            'kaf-pos-base/static/xml/Screens/**/*',
+            'kaf-missg-pos/static/xml/**/*',
+            'kaf-missg-pos/static/xml/Screens/**/*',
         ],
     },
     'license': 'LGPL-3',

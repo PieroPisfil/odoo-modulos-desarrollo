@@ -13,11 +13,14 @@ odoo.define('kaf-pos-base.models', function(require) {
             this.journal_by_id = {};
             this.journal_by_nombre = {};
             this.sequence_by_id = {};
-            this.journal_sequence_by_id = {};
+            this.journal_sequence_by_id = {};       
             this.forma_de_pago_pe_alt = [
                 {'id':0,'code': 'contado', 'name':'CONTADO'},
                 {'id':1,'code': 'credito', 'name':'CRÉDITO'},
                 {'id':2,'code': 'garantia', 'name':'POR GARANTÍA'},]
+            this.forma_de_pago_pe_pos_evento = [
+                {'id':0,'code': 'contado', 'name':'CONTADO'},
+                {'id':2,'code': 'garantia', 'name':'SIN COSTO'},]
             //this.invoice_numbers=[];
             return PosDBSuper.prototype.init.apply(this, arguments);
         },
@@ -169,6 +172,13 @@ odoo.define('kaf-pos-base.models', function(require) {
                 }
             });
             return false;
+        },
+        get_qr_code: function() {
+            var qr_string = this.name ? this.name : "";
+            var qrcodesingle = new QRCode(false, {width : 80, height : 80, correctLevel : QRCode.CorrectLevel.Q});
+            qrcodesingle.makeCode(qr_string);
+            let qrdibujo = qrcodesingle.getDrawing();
+            return qrdibujo._canvas_base64;
         }
     });
 

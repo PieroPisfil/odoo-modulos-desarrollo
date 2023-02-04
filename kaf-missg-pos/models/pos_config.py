@@ -14,4 +14,5 @@ class PosConfig(models.Model):
     invoice_journal_boleta_id = fields.Many2one("account.journal", string="Diario de boleta Perú", domain=lambda self: "[('type', 'in', ['sale']), ('tipo_comprobante','=',%s), ('pe_invoice_code','=','03')]" % self.env.ref('kaf-account-base.boleta_1').id)
     invoice_journal_recibo_venta_id = fields.Many2one("account.journal", string="Diario de Recibos", domain=lambda self: "[('type', 'in', ['sale']), ('tipo_comprobante','=',%s)]" % self.env.ref('kaf-account-base.recibo_caja_1').id)
     envio_automatico_cpe = fields.Boolean(default=True, string="Envío Automático CPE")
+    pos_evento = fields.Boolean(default=False, srting="Habilitar si el pos será usado para evento")
     # invoice_journal_ticket_intercambio_id = fields.Many2one("account.journal", string="Diario de Tickets", domain=lambda self: "[('type', 'in', ['sale']), ('tipo_comprobante','=',%s), ('pe_invoice_code','=','')]" % self.env.ref('kaf-account-base.recibo_caja_1').id)

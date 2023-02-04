@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="point_of_sale.template" xml:space="preserve">
+    <t t-name="ReprintReceiptScreen" t-inherit="point_of_sale.ReprintReceiptScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-receipt-container')]" position="replace">
+            <div class="pos-receipt-container">
+                <OrderReceipt order="props.order" t-ref="order-receipt" />
+            </div>
+        </xpath>
+    </t>
+</templates>
