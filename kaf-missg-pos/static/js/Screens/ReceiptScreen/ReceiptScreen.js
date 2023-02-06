@@ -22,10 +22,9 @@ odoo.define('kaf-pos-base.ReceiptScreen', function (require) {
                 var data_order = this.currentOrder.orderlines.models;
                 var json_datos = []
                 var index = 0 
-                //for (var j=0;j){}
                 for (var i=0;i<data_order.length;i++){
                     for (var j=0;j<data_order[i].quantity;j++){
-                        json_datos[index]=[index,data_order[i].product.display_name,data_order[i].product.lst_price]
+                        json_datos[index]=[index,data_order[i].product.display_name,data_order[i].price]
                         index++;
                     }
                 }

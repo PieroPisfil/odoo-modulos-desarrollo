@@ -8,10 +8,10 @@
                 <div class="pos-receipt">
                     <!--Cabecera Header-->
                     <div style="display: flex;align-items: center;justify-content: space-evenly;">
-                        <div style="width: 25%;display: inline-flex;
+                        <div style="width: 40%;display: inline-flex;
                             justify-content: center;align-items: center;">
                             <t t-if="receipt.company.logo">
-                                <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo" style="width: 100%;"/>
+                                <img class="pos-receipt-logo" t-att-src="imageUrl" alt="Logo" style="width: 100%;"/>
                             </t>
                             <t t-if="!receipt.company.logo">
                                 <h2 class="pos-receipt-center-align">
