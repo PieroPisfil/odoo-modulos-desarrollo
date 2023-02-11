@@ -5,8 +5,9 @@
         <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
             
             <t t-if="props.order.pos.config.pos_evento &amp;&amp; props.jsondatos">
-                <div class="pos-receipt" style="padding: 20px 25px;">
-                    <div style="display: flex;justify-content: space-evenly;align-items: center;margin-top: -0.1rem;padding:0.5rem;">
+                <div class="pos-receipt">
+                    <hr/>
+                    <div style="display: flex;justify-content: space-evenly;align-items: center;margin-top: 0.1rem;">
                         <div>
                             <div style="text-align:center;font-size: 0.5rem;margin-top:-0.2rem;">
                                 <t t-if="receipt.invoice.invoice_journal_name">
