@@ -175,7 +175,7 @@ odoo.define('kaf-pos-base.models', function(require) {
         },
         get_qr_code: function() {
             var qr_string = this.name ? this.name : "";
-            var qrcodesingle = new QRCode(false, {width : 90, height : 90, correctLevel : QRCode.CorrectLevel.Q});
+            var qrcodesingle = new QRCode(false, {width : 60, height : 60, correctLevel : QRCode.CorrectLevel.Q});
             qrcodesingle.makeCode(qr_string);
             let qrdibujo = qrcodesingle.getDrawing();
             return qrdibujo._canvas_base64;

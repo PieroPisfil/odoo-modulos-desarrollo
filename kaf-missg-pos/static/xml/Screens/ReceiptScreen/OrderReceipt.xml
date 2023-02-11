@@ -5,51 +5,47 @@
         <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
             
             <t t-if="props.order.pos.config.pos_evento &amp;&amp; props.jsondatos">
-                <div class="pos-receipt">
-                    <div style="display: flex;justify-content: space-evenly;align-items: center;margin-top: -0.6rem;">
+                <div class="pos-receipt" style="padding: 20px 25px;">
+                    <div style="display: flex;justify-content: space-evenly;align-items: center;margin-top: -0.1rem;padding:0.5rem;">
                         <div>
-                            <div style="display: flex;align-items: center;justify-content: space-evenly;">
-                                <div style="width: 60%;display: inline-flex;
-                                    justify-content: center;align-items: center;">
-                                    <t t-if="receipt.company.logo">
-                                        <img class="pos-receipt-logo" t-att-src="imageUrl" alt="Logo" style="width: 100%;"/>
-                                    </t>
-                                    <t t-if="!receipt.company.logo">
-                                        <h2 class="pos-receipt-center-align">
-                                            <t t-esc="receipt.company.name" />
-                                        </h2>
-                                    </t>
-                                </div>
-                            </div>
-                            <div style="text-align:center;font-size: 0.7rem;margin-top:-0.2rem;">
-                                <div>
-                                    <t t-if="receipt.invoice.invoice_journal_name">
-                                        <t t-esc="receipt.invoice.invoice_journal_name"/> 
-                                    </t>
-                                    <t t-if="order.get_invoice_number()">
-                                        | <t t-esc="order.get_invoice_number()"/>
-                                    </t>
-                                </div>
+                            <div style="text-align:center;font-size: 0.5rem;margin-top:-0.2rem;">
+                                <t t-if="receipt.invoice.invoice_journal_name">
+                                    <t t-esc="receipt.invoice.invoice_journal_name"/> 
+                                </t>
+                                <t t-if="order.get_invoice_number()">
+                                    | <t t-esc="order.get_invoice_number()"/>
+                                </t>
                                 | <t t-esc="receipt.name" />
-                                <div>
-                                    <t t-if="receipt.date.localestring">
-                                        | <t t-esc="receipt.date.localestring" />
-                                    </t>
-                                    <t t-else="">
-                                        | <t t-esc="receipt.date.validation_date" />
-                                    </t>
+                                <t t-if="receipt.date.localestring">
+                                    | <t t-esc="receipt.date.localestring" />
+                                </t>
+                                <t t-else="">
+                                    | <t t-esc="receipt.date.validation_date" />
+                                </t>
+                            </div>
+                            <!-- QR O CODE BAR -->
+                            <t t-if="order.get_qr_code()">
+                                <div class="qr-code" id="qr-code" style="display: flex; justify-content: center;">
+                                    <img alt="Scan me!" style="display: block;" t-att-src='order.get_qr_code()' />
                                 </div>
+                            </t>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-evenly;">
+                            <div style="width: 90%;display: inline-flex;
+                                justify-content: center;align-items: center;">
+                                <t t-if="receipt.company.logo">
+                                    <img class="pos-receipt-logo" t-att-src="imageUrl" alt="Logo" style="width: 100%;"/>
+                                </t>
+                                <t t-if="!receipt.company.logo">
+                                    <h2 class="pos-receipt-center-align">
+                                        <t t-esc="receipt.company.name" />
+                                    </h2>
+                                </t>
                             </div>
                         </div>
-                        <!-- QR O CODE BAR -->
-                        <t t-if="order.get_qr_code()">
-                            <div class="qr-code" id="qr-code" style="display: flex; justify-content: center;">
-                                <img alt="Scan me!" style="display: block;" t-att-src='order.get_qr_code()' />
-                            </div>
-                        </t>
                     </div>
                     <br/>
-                    <div style="text-align:center;font-size: 1.2rem;margin-top:-0.6rem;margin-bottom: -0.9rem;">
+                    <div style="text-align:center;font-size: 1.2rem;margin-top:-0.6rem;margin-bottom: -0.4rem;">
                         <t t-if="props.jsondatos">
                             <!-- *** <b><t t-esc="props.jsondatos[1]" /></b>: S/.<t t-esc="props.jsondatos[2]" /> *** -->
                             *** <b><t t-esc="props.jsondatos[1]" /></b> ***
