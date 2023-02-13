@@ -14,8 +14,7 @@
         'point_of_sale',
     ],
     'data': [
-        # 'views/*',
-        # 'data/*',
+        'views/res_company_view.xml',
     ],
     'assets': {
         'point_of_sale.assets': [
